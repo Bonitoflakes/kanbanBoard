@@ -11,7 +11,7 @@ export const ColumnColors = {
     text: "text-[#482F64]",
     circle: "bg-[#8E5BC1]",
   },
-  doing: {
+  inprogress: {
     bg: "bg-[#6F3630]",
     text: "text-[#6F3630]",
     circle: "bg-[#CD4846]",
@@ -32,7 +32,7 @@ export const TextAreaColors = {
     border: "border-[#8e5bc1]",
     bg: "bg-[#8e5bc1]",
   },
-  doing: {
+  inprogress: {
     border: "border-[#ff2925]",
     bg: "bg-[#9c5a59]",
   },

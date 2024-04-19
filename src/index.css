@@ -44,6 +44,10 @@
   --brownLight: #aa755f;
   --brownMedium: #845641;
   --brownDark: #603b2c;
+
+  --grayLight: #808080;
+  --grayMedium: #464545;
+  --grayDark: #272626;
 }
 
 body {

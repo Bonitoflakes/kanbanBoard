@@ -1,19 +1,25 @@
 import { useState } from "react";
 import Column from "./column";
-import { useAppSelector } from "@/store/store";
-import { getAllColumns } from "@/store/taskSlice";
+import {  useGetTasksQuery } from "@/store/api";
+import invariant from "tiny-invariant";
 
 function Kanban() {
-  const columns = useAppSelector(getAllColumns);
+  const { data, isLoading, isError, error } = useGetTasksQuery();
   const [activeColumn, setActiveColumn] = useState("");
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error: {JSON.stringify(error)}</div>;
+  invariant(data);
+  console.log(data)
 
   return (
     <>
       <div className="flex bg-[#191919] w-full h-full gap-4 p-4 overflow-x-auto">
-        {columns.map((column) => (
+        {data.map((column) => (
           <Column
-            key={column}
-            title={column}
+            key={column.title}
+            cards={column.cards}
+            title={column.column}
             activeColumn={activeColumn}
             setActiveColumn={setActiveColumn}
           />

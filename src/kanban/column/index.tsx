@@ -10,16 +10,16 @@ import {
   ElementDragType,
   DropTargetLocalizedData,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { cn } from "@/utils/cn"
+import { cn } from "@/utils/cn";
 import { selectAllTasks, updateCard } from "@/store/taskSlice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ColumnColors, ColumnType } from "../colors";
 
 export type ColumnProps = {
   title: string;
   activeColumn: string;
   setActiveColumn: React.Dispatch<React.SetStateAction<string>>;
+  cards: { id: string; title: string; column: string }[];
 };
 
 export type NewCardProps = {
@@ -40,9 +40,8 @@ export type ColumnHeaderProps = {
   total: number;
 };
 
-function Column({ title, activeColumn, setActiveColumn }: ColumnProps) {
+function Column({ title, activeColumn, setActiveColumn, cards }: ColumnProps) {
   const [adding, setAdding] = useState<boolean>(false);
-
   const tasks = useAppSelector(selectAllTasks);
   const columnCards = tasks.filter((c) => c.column === title);
 
