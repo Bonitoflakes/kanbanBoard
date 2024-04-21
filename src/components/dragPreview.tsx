@@ -1,6 +1,6 @@
 export function DragPreview({ title }: { title: string }) {
   return (
-    <div className="max-w-72 text-ellipsis bg-black py-1 px-2 rounded-md line-clamp-1">
+    <div className="line-clamp-1 max-w-72 text-ellipsis rounded-md bg-black px-2 py-1">
       {title}
     </div>
   );

@@ -31,7 +31,7 @@ import invariant from "tiny-invariant";
 
 export function getIndex<T extends { id: number | string }>(
   list: T[],
-  id: string | number
+  id: string | number,
 ) {
   const index =
     typeof id === "string"
@@ -42,4 +42,3 @@ export function getIndex<T extends { id: number | string }>(
 
   return index;
 }
-

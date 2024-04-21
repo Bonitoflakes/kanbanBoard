@@ -52,27 +52,29 @@ function Card({ id, title, column }: CardProps) {
   };
 
   return (
-    <div className="relative group/card" ref={draggableRef}>
-      <div
-        className={cn(
-          "active:cursor-grabbing text-sm w-full py-3 px-2 hover:bg-accent-1/35 transition-colors rounded-md font-semibold text-start empty:before:content-['Untitled...'] empty:before:text-neutral-400 cursor-grab bg-accent-2",
-          editing && "cursor-auto",
-        )}
-        contentEditable={editing}
-        suppressContentEditableWarning={true}
-        ref={contentEditableRef}
-        onBlur={handleSave}
-      >
-        {title}
-      </div>
+    <div className="group/card relative" ref={draggableRef}>
+      <div className="rounded-md bg-accent-2 transition-colors hover:bg-accent-1/35">
+        <div
+          className={cn(
+            "w-full cursor-grab rounded-md px-2 py-3 text-start text-sm font-semibold text-secondary empty:before:text-neutral-400 empty:before:content-['Untitled...'] active:cursor-grabbing dark:empty:before:text-neutral-400",
+            editing && "cursor-auto",
+          )}
+          contentEditable={editing}
+          suppressContentEditableWarning={true}
+          ref={contentEditableRef}
+          onBlur={handleSave}
+        >
+          {title}
+        </div>
 
-      {!editing && (
-        <CardOptions
-          handleEdit={handleEdit}
-          handleDelete={handleDelete}
-          id={id}
-        />
-      )}
+        {!editing && (
+          <CardOptions
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            id={id}
+          />
+        )}
+      </div>
     </div>
   );
 }

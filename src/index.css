@@ -4,10 +4,93 @@
 
 @layer base {
   :root[data-theme="dark"] {
-    --primary: var(--dark-bg);
+    --primary: 0deg 0% 10%;
+    --secondary: 0deg 0% 100%;
+
+    --redLight: 1deg 57% 54%;
+    --redMedium: 8deg 32% 24%;
+    --redDark: 9deg 11% 13%;
+
+    --purpleLight: 269deg 45% 56%;
+    --purpleMedium: 272deg 20% 19%;
+    --purpleDark: 269.4deg 8.1% 13.8%;
+
+    --blueLight: 211.3deg 63.9% 50%;
+    --blueMedium: 200deg 36% 16%;
+    --blueDark: 214deg 11% 13%;
+
+    --greenLight: 150.6deg 54.5% 38.8%;
+    --greenMedium: 148.8deg 44.8% 32%;
+    --greenDark: 140deg 9% 13%;
+
+    --yellowLight: 39.4deg 76.4% 44.9%;
+    --yellowMedium: 31deg 29% 20%;
+    --yellowDark: 33deg 15% 12%;
+
+    --orangeLight: 28deg 74.2% 48.6%;
+    --orangeMedium: 28deg 73% 38%;
+    --orangeDark: 27.1deg 64.2% 31.8%;
+
+    --brownLight: 17.6deg 30.6% 52%;
+    --brownMedium: 18.8deg 34% 38.6%;
+    --brownDark: 17.3deg 37.1% 27.5%;
+
+    --grayLight: 0deg 0% 50.2%;
+    --grayMedium: 0deg 0.7% 27.3%;
+    --grayDark: 0deg 1.3% 15.1%;
   }
+
   :root[data-theme="light"] {
-    --primary: var(--light-bg);
+    --primary: 0deg 0% 100%;
+    --secondary: 0deg 0% 10%;
+
+    --redLight: 5deg 67% 64%;
+    --redMedium: 9deg 100% 93%;
+    --redDark: 9deg 78% 98%;
+
+    /* hsl(9, 78%, 98%)
+    hsl(9, 100%, 93%)
+    hsl(5, 67%, 64%) */
+
+    --purpleLight: 274deg 35% 64%;
+    --purpleMedium: 278deg 32% 90%;
+    --purpleDark: 270deg 50% 98%;
+
+    /* hsl(270, 50%, 98%)
+    hsl(278, 32%, 90%)
+    hsl(274, 35%, 64%) */
+
+    --blueLight: 204deg 42% 55%;
+    --blueMedium: 203deg 47% 88%;
+    --blueDark: 189deg 54% 98%;
+
+    /* hsl(189, 54%, 98%)
+    hsl(203, 47%, 88%)
+    hsl(204, 42%, 55%) */
+
+    --greenLight: 150.6deg 54.5% 38.8%;
+    --greenMedium: 148.8deg 44.8% 32%;
+    --greenDark: 140deg 9% 13%;
+
+    --yellowLight: 38deg 60% 50%;
+    --yellowMedium: 41deg 93% 89%;
+    --yellowDark: 45deg 50% 97%;
+
+    /* hsl(45, 50%, 97%)
+    hsl(41, 93%, 89%)
+    hsl(38, 60%, 50%) */
+
+    --orangeLight: 28deg 74.2% 48.6%;
+    --orangeMedium: 28deg 73% 38%;
+    --orangeDark: 27.1deg 64.2% 31.8%;
+
+    --brownLight: 17.6deg 30.6% 52%;
+    --brownMedium: 18.8deg 34% 38.6%;
+    --brownDark: 17.3deg 37.1% 27.5%;
+
+    --grayLight: 0deg 0% 50.2%;
+    --grayMedium: 0deg 0.7% 27.3%;
+    --grayDark: 0deg 1.3% 15.1%;
   }
 
   [data-theme="rose"] {
@@ -33,11 +116,13 @@
     --accent-2: var(--greenMedium);
     --accent-3: var(--greenDark);
   }
+
   [data-theme="orange"] {
     --accent-1: var(--orangeLight);
     --accent-2: var(--orangeMedium);
     --accent-3: var(--orangeDark);
   }
+
   [data-theme="brown"] {
     --accent-1: var(--brownLight);
     --accent-2: var(--brownMedium);
@@ -49,48 +134,12 @@
     --accent-2: var(--purpleMedium);
     --accent-3: var(--purpleDark);
   }
+
   [data-theme="gray"] {
     --accent-1: var(--grayLight);
     --accent-2: var(--grayMedium);
     --accent-3: var(--grayDark);
   }
-}
-
-:root {
-  --dark-bg: 0deg 0% 10%;
-  --light-bg: 0deg 11% 88%;
-
-  --redLight: 1deg 57% 54%;
-  --redMedium: 8deg 32% 24%;
-  --redDark: 9deg 11% 13%;
-
-  --purpleLight: 269deg 45% 56%;
-  --purpleMedium: 272deg 20% 19%;
-  --purpleDark: 269.4deg 8.1% 13.8%;
-
-  --blueLight: 211.3deg 63.9% 50%;
-  --blueMedium: 200deg 36% 16%;
-  --blueDark: 214deg 11% 13%;
-
-  --greenLight: 150.6deg 54.5% 38.8%;
-  --greenMedium: 148.8deg 44.8% 32%;
-  --greenDark: 140deg 9% 13%;
-
-  --yellowLight: 39.4deg 76.4% 44.9%;
-  --yellowMedium: 31deg 29% 20%;
-  --yellowDark: 33deg 15% 12%;
-
-  --orangeLight: 28deg 74.2% 48.6%;
-  --orangeMedium: 28deg 73% 38%;
-  --orangeDark: 27.1deg 64.2% 31.8%;
-
-  --brownLight: 17.6deg 30.6% 52%;
-  --brownMedium: 18.8deg 34% 38.6%;
-  --brownDark: 17.3deg 37.1% 27.5%;
-
-  --grayLight: 0deg 0% 50.2%;
-  --grayMedium: 0deg 0.7% 27.3%;
-  --grayDark: 0deg 1.3% 15.1%;
 }
 
 :root {
@@ -101,6 +150,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  @apply transition-colors duration-200;
 }
 
 body {

@@ -12,10 +12,10 @@ export function CardOptions({
   handleDelete,
 }: CardOptionsProps) {
   return (
-    <span className="absolute top-1.5 right-3 flex opacity-0 group-hover/card:opacity-100">
+    <span className="absolute right-3 top-1.5 flex opacity-0 group-hover/card:opacity-100">
       <button
         title="Edit"
-        className="bg-gray-700 py-2 px-2 rounded-s-lg hover:bg-gray-900"
+        className="rounded-s-lg bg-primary/65 px-2 py-2 hover:bg-gray-800/70"
         onClick={handleEdit}
       >
         <MdEdit />
@@ -25,7 +25,7 @@ export function CardOptions({
 
       <button
         title="Delete"
-        className="bg-gray-700 py-2 px-2 rounded-e-lg hover:bg-red-900"
+        className="rounded-e-lg bg-primary/65 px-2 py-2 hover:bg-red-800"
         onClick={() => handleDelete(id)}
       >
         <MdDelete />

@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
-import { DEFAULT_CARDS, DEFAULT_COLUMNS } from "@/kanban/mock";
+import { DEFAULT_CARDS, DEFAULT_COLUMNS } from "./mock";
 import { RootState } from "./store";
 
 export type Task = {
@@ -16,7 +16,7 @@ export const TaskSlice = createSlice({
   name: "tasks",
   initialState: TaskAdapter.getInitialState(
     { columns: DEFAULT_COLUMNS },
-    DEFAULT_CARDS
+    DEFAULT_CARDS,
   ),
   reducers: {
     addCard: TaskAdapter.addOne,
@@ -27,7 +27,7 @@ export const TaskSlice = createSlice({
 });
 
 const globalizedTaskSelectors = TaskAdapter.getSelectors(
-  (s: RootState) => s.tasks
+  (s: RootState) => s.tasks,
 );
 
 export const { addCard, updateCard, deleteCard, setAllCards } =

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Card from "@/kanban/card";
+import Card from "@/features/kanban/card";
 import { AddCard } from "./addCard";
 import { MdAdd } from "react-icons/md";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
@@ -53,7 +53,7 @@ function Column({
     invariant(el);
 
     const handleDrop = (
-      args: BaseEventPayload<ElementDragType> & DropTargetLocalizedData
+      args: BaseEventPayload<ElementDragType> & DropTargetLocalizedData,
     ) => {
       const { source, self } = args;
       const origin = source.data.origin;
@@ -72,7 +72,7 @@ function Column({
           changes: {
             column: destination,
           },
-        })
+        }),
       );
     };
 
@@ -105,9 +105,10 @@ function Column({
   return (
     <div
       data-theme={columnColor}
+      data-mode={"dark"}
       className={cn(
-        "flex-1 min-w-[280px] h-fit p-2 group rounded-md bg-accent-3",
-        activeColumn === title && "bg-sky-800"
+        "group h-fit min-w-[280px] flex-1 rounded-md bg-accent-3 p-2",
+        activeColumn === title && "bg-sky-800",
       )}
       ref={columnRef}
     >
@@ -119,7 +120,7 @@ function Column({
       />
 
       {/* ******** The Cards */}
-      <div className=" flex flex-col gap-[5px] mt-6">
+      <div className=" mt-6 flex flex-col gap-[5px]">
         {columnCards.map((card) => (
           <Card key={card.id} {...card} />
         ))}
@@ -139,14 +140,16 @@ export const ColumnHeader = ({
   return (
     <div className="flex">
       {/* The Pill */}
-      <div className="flex gap-1 items-center pl-[7px] pr-[9px] rounded-3xl bg-accent-2">
-        <div className="w-2 h-2 rounded-full bg-accent-1" />
-        <h1 className="text-sm font-bold mt-[-2px]">{title}</h1>
+      <div className="flex items-center gap-1 rounded-3xl bg-accent-2 pl-[7px] pr-[9px]">
+        <div className="h-2 w-2 rounded-full bg-accent-1" />
+        <h3 className="mt-[-2px] text-sm font-normal text-accent-1 dark:font-bold">
+          {title}
+        </h3>
       </div>
 
       {/* The Count */}
       <div className="ml-1 flex place-items-center">
-        <button className="text-accent-1 text-sm py-1 px-2 rounded-md cursor-auto">
+        <button className="cursor-auto rounded-md px-2 py-1 text-sm text-accent-1">
           {total}
         </button>
       </div>
@@ -156,11 +159,11 @@ export const ColumnHeader = ({
 
       {/* The buttons */}
       <div className="flex place-items-center">
-        <button className="text-sm py-1 px-2 hover:bg-accent-2/35 transition-colors rounded-md opacity-0  group-hover:opacity-100 font-extrabold text-accent-1">
+        <button className="rounded-md px-2 py-1 text-sm font-extrabold text-accent-1 opacity-0  transition-colors hover:bg-accent-2/35 group-hover:opacity-100">
           <HiOutlineDotsHorizontal size={18} />
         </button>
         <button
-          className="text-sm py-1 px-2 hover:bg-accent-2/35 transition-colors rounded-md opacity-0  group-hover:opacity-100 font-extrabold text-accent-1"
+          className="rounded-md px-2 py-1 text-sm font-extrabold text-accent-1 opacity-0  transition-colors hover:bg-accent-2/35 group-hover:opacity-100"
           onClick={toggleAdding}
         >
           <MdAdd size={18} />
@@ -179,7 +182,8 @@ export const NewCard = ({ title, adding, toggleAdding }: NewCardProps) => {
       {/* New Button */}
       {!adding && (
         <button
-          className="text-sm w-full p-2 flex gap-2 items-center mt-1.5 hover:bg-accent-2/25 transition-colors duration-200 rounded-md font-semibold text-start text-accent-1"
+          className="mt-1.5 flex w-full items-center gap-2 rounded-md p-2 text-start
+          text-sm font-semibold text-accent-1 transition-colors duration-200 hover:bg-accent-2/75 dark:hover:bg-accent-1/20"
           onClick={toggleAdding}
         >
           <MdAdd size={18} /> New

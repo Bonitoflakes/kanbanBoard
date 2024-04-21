@@ -1,6 +1,6 @@
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
-import Kanban from "./kanban";
+import Kanban from "./features/kanban";
 
 function App() {
   return (

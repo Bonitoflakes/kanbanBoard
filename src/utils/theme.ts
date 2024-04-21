@@ -1,44 +1,16 @@
-export type themeKey = keyof typeof theme;
-
-export const theme = {
-  default: {
-    primary: "--grayMedium",
-    secondary: "--grayLight",
-    tertiary: "--grayDark",
-  },
-  brown: {
-    primary: "--brownMedium",
-    secondary: "--brownLight",
-    tertiary: "--brownDark",
-  },
-  red: {
-    primary: "--redMedium",
-    secondary: "--redLight",
-    tertiary: "--redDark",
-  },
-  purple: {
-    primary: "--purpleMedium",
-    secondary: "--purpleLight",
-    tertiary: "--purpleDark",
-  },
-  green: {
-    primary: "--greenMedium",
-    secondary: "--greenLight",
-    tertiary: "--greenDark",
-  },
-  yellow: {
-    primary: "--yellowMedium",
-    secondary: "--yellowLight",
-    tertiary: "--yellowDark",
-  },
-  orange: {
-    primary: "--orangeMedium",
-    secondary: "--orangeLight",
-    tertiary: "--orangeDark",
-  },
-  blue: {
-    primary: "--blueMedium",
-    secondary: "--blueLight",
-    tertiary: "--blueDark",
-  },
+/**
+ * Toggles the theme based on the specified mode.
+ * @param {("system" | "light" | "dark")} mode - The mode to toggle the theme to.
+ * @returns {void}
+ */
+const toggleTheme = (mode: "system" | "light" | "dark"): void => {
+  const isDarkPreferred = window.matchMedia(
+    "(prefers-color-scheme: dark)",
+  ).matches;
+  const theme = mode === "system" ? (isDarkPreferred ? "dark" : "light") : mode;
+  mode !== "system" && localStorage.setItem("theme", theme);
+  mode === "system" && localStorage.removeItem("theme");
+  document.documentElement.setAttribute("data-theme", theme);
 };
+
+export { toggleTheme };
