@@ -32,7 +32,7 @@ export function AddCard({ adding, toggleAdding, column }: AddCardProps) {
           onChange={(e) => setValue(e.target.value)}
           autoFocus
           placeholder="Add new task..."
-          className="mt-2.5 w-full resize-none rounded bg-accent-2 p-3 text-sm text-secondary   placeholder-slate-400 ring-accent-1/30 focus-visible:outline-none focus-visible:outline-accent-1 focus-visible:ring-1 dark:placeholder-slate-200"
+          className="mt-2.5 w-full resize-none rounded bg-accent-2 p-3 text-sm font-semibold text-secondary   placeholder-slate-400 ring-accent-1/30 focus-visible:outline-none focus-visible:outline-accent-1 focus-visible:ring-1 dark:placeholder-slate-200"
         />
       )}
     </>

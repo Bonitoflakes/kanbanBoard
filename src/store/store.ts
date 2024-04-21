@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
-import { TaskSlice } from "./taskSlice";
+// import { TaskSlice } from "./taskSlice";
 import { api } from "./api";
 
 export const store = configureStore({
   reducer: {
-    tasks: TaskSlice.reducer,
+    // tasks: TaskSlice.reducer,
     [api.reducerPath]: api.reducer,
   },
 

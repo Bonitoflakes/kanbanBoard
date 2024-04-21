@@ -56,8 +56,8 @@ function Card({ id, title, column }: CardProps) {
       <div className="rounded-md bg-accent-2 transition-colors hover:bg-accent-1/35">
         <div
           className={cn(
-            "w-full cursor-grab rounded-md px-2 py-3 text-start text-sm font-semibold text-secondary empty:before:text-neutral-400 empty:before:content-['Untitled...'] active:cursor-grabbing dark:empty:before:text-neutral-400",
-            editing && "cursor-auto",
+            "w-full cursor-grab break-all rounded-md px-2 py-3 text-start text-sm font-semibold text-secondary empty:before:text-neutral-400 empty:before:content-['Untitled...'] active:cursor-grabbing dark:empty:before:text-neutral-400",
+            editing && "cursor-auto ",
           )}
           contentEditable={editing}
           suppressContentEditableWarning={true}

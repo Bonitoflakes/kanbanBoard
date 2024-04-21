@@ -9,6 +9,10 @@ const theme =
 
 document.documentElement.setAttribute("data-theme", theme);
 
+if (theme === "dark") {
+  document.documentElement.classList.add("dark");
+}
+
 window
   .matchMedia("(prefers-color-scheme: dark)")
   .addEventListener("change", (e) => {
@@ -16,5 +20,11 @@ window
       "data-theme",
       e.matches ? "dark" : "light",
     );
+
+    if (e.matches) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   });
 
