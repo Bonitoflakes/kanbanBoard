@@ -2,52 +2,96 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root[data-theme="dark"] {
+    --accent-1: 346.8deg 77.2% 49.8%;
+  }
+  :root[data-theme="light"] {
+    --accent-1: 36deg 53% 35%;
+  }
+
+  [data-theme="rose"] {
+    --accent-1: var(--redLight);
+    --accent-2: var(--redMedium);
+    --accent-3: var(--redDark);
+  }
+
+  [data-theme="yellow"] {
+    --accent-1: var(--yellowLight);
+    --accent-2: var(--yellowMedium);
+    --accent-3: var(--yellowDark);
+  }
+
+  [data-theme="blue"] {
+    --accent-1: var(--blueLight);
+    --accent-2: var(--blueMedium);
+    --accent-3: var(--blueDark);
+  }
+
+  [data-theme="green"] {
+    --accent-1: var(--greenLight);
+    --accent-2: var(--greenMedium);
+    --accent-3: var(--greenDark);
+  }
+  [data-theme="orange"] {
+    --accent-1: var(--orangeLight);
+    --accent-2: var(--orangeMedium);
+    --accent-3: var(--orangeDark);
+  }
+  [data-theme="brown"] {
+    --accent-1: var(--brownLight);
+    --accent-2: var(--brownMedium);
+    --accent-3: var(--brownDark);
+  }
+  [data-theme="gray"] {
+    --accent-1: var(--grayLight);
+    --accent-2: var(--grayMedium);
+    --accent-3: var(--grayDark);
+  }
+}
+
+:root {
+  --redLight: 2deg 58% 54%;
+  --redMedium: 3.3, 45.9%, 38.4%;
+  --redDark: 5.8, 39.2%, 31%;
+
+  --purpleLight: 269deg 45% 56%;
+  --purpleMedium: 270deg 33.9% 43.9%;
+  --purpleDark: 269.4deg 36.1% 28.8%;
+
+  --blueLight: 211.3deg 63.9% 50%;
+  --blueMedium: 212.8deg 56.8% 37.3%;
+  --blueDark: 214.4deg 45.9% 29%;
+
+  --greenLight: 150.6deg 54.5% 38.8%;
+  --greenMedium: 148.8deg 44.8% 32%;
+  --greenDark: 146.1deg 34.8% 25.9%;
+
+  --yellowLight: 39.4deg 76.4% 44.9%;
+  --yellowMedium: 37.5deg 63.2% 37.3%;
+  --yellowDark: 36deg 53% 35%;
+
+  --orangeLight: 28deg 74.2% 48.6%;
+  --orangeMedium: 28deg 73% 38%;
+  --orangeDark: 27.1deg 64.2% 31.8%;
+
+  --brownLight: 17.6deg 30.6% 52%;
+  --brownMedium: 18.8deg 34% 38.6%;
+  --brownDark: 17.3deg 37.1% 27.5%;
+
+  --grayLight: 0deg 0% 50.2%;
+  --grayMedium: 0deg 0.7% 27.3%;
+  --grayDark: 0deg 1.3% 15.1%;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
-
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-:root {
-  --redLight: #cd4945;
-  --redMedium: #8f3a35;
-  --redDark: #6e3630;
-
-  --purpleLight: #8d5bc1;
-  --purpleMedium: #704a96;
-  --purpleDark: #492f64;
-
-  --blueLight: #2e7cd1;
-  --blueMedium: #295a95;
-  --blueDark: #28456c;
-
-  --greenLight: #2d9964;
-  --greenMedium: #2d7650;
-  --greenDark: #2b593f;
-
-  --yellowLight: #ca8e1b;
-  --yellowMedium: #9b6e23;
-  --yellowDark: #89632a;
-
-  --orangeLight: #d87620;
-  --orangeMedium: #a75b1a;
-  --orangeDark: #854c1d;
-
-  --brownLight: #aa755f;
-  --brownMedium: #845641;
-  --brownDark: #603b2c;
-
-  --grayLight: #808080;
-  --grayMedium: #464545;
-  --grayDark: #272626;
 }
 
 body {
@@ -55,5 +99,9 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  width: 100%;
+}
+
+#root{
   width: 100%;
 }

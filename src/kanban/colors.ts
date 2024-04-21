@@ -1,7 +1,7 @@
 export type ColumnType = keyof typeof ColumnColors;
 
 export const ColumnColors = {
-  backlog: {
+  archived: {
     bg: "bg-[#2C593F]",
     text: "text-[#2C593F]",
     circle: "bg-[#2D9963]",
@@ -11,7 +11,7 @@ export const ColumnColors = {
     text: "text-[#482F64]",
     circle: "bg-[#8E5BC1]",
   },
-  inprogress: {
+  doing: {
     bg: "bg-[#6F3630]",
     text: "text-[#6F3630]",
     circle: "bg-[#CD4846]",
@@ -24,7 +24,7 @@ export const ColumnColors = {
 };
 
 export const TextAreaColors = {
-  backlog: {
+  archived: {
     border: "border-[#2d9963]",
     bg: "bg-[#2d9963]",
   },
@@ -32,7 +32,7 @@ export const TextAreaColors = {
     border: "border-[#8e5bc1]",
     bg: "bg-[#8e5bc1]",
   },
-  inprogress: {
+  doing: {
     border: "border-[#ff2925]",
     bg: "bg-[#9c5a59]",
   },

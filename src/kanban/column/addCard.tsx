@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { ColumnType, TextAreaColors } from "../colors";
-import CardTextArea from "@/components/cardTextArea";
-import { useAppDispatch } from "@/store/store";
-import { addCard } from "@/store/taskSlice";
+import { useAddTaskMutation } from "@/store/api";
+import { cn } from "@/utils/cn";
 
 type AddCardProps = {
   column: string;
@@ -11,20 +10,18 @@ type AddCardProps = {
 };
 
 export function AddCard({ adding, toggleAdding, column }: AddCardProps) {
-  const dispatch = useAppDispatch();
+  const [addCard] = useAddTaskMutation();
   const [value, setValue] = useState("");
   const columnColors = TextAreaColors[column as ColumnType];
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    dispatch(
-      addCard({
-        title: value.trim() || "",
-        column,
-        id: Math.random().toString(),
-      })
-    );
+    addCard({
+      title: value.trim(),
+      column,
+    });
+
     setValue("");
     toggleAdding();
   };
@@ -32,11 +29,17 @@ export function AddCard({ adding, toggleAdding, column }: AddCardProps) {
   return (
     <>
       {adding && (
-        <CardTextArea
+        <textarea
+          onBlur={handleSubmit}
           value={value}
-          setValue={setValue}
-          handleSubmit={handleSubmit}
-          columnColors={columnColors}
+          onChange={(e) => setValue(e.target.value)}
+          autoFocus
+          placeholder="Add new task..."
+          className={cn(
+            columnColors.bg,
+            columnColors.border,
+            "placeholder-slate-200 w-full rounded border mt-2 p-3 text-sm text-neutral-50  focus:outline-0 focus-visible:outline-0 resize-none contentEditable"
+          )}
         />
       )}
     </>

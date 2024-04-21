@@ -11,14 +11,15 @@ import {
   DropTargetLocalizedData,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { cn } from "@/utils/cn";
-import { selectAllTasks, updateCard } from "@/store/taskSlice";
-import { useAppDispatch, useAppSelector } from "@/store/store";
+import { updateCard } from "@/store/taskSlice";
+import { useAppDispatch } from "@/store/store";
 import { ColumnColors, ColumnType } from "../colors";
 
 export type ColumnProps = {
   title: string;
   activeColumn: string;
   setActiveColumn: React.Dispatch<React.SetStateAction<string>>;
+  columnColor: string;
   cards: { id: string; title: string; column: string }[];
 };
 
@@ -40,16 +41,20 @@ export type ColumnHeaderProps = {
   total: number;
 };
 
-function Column({ title, activeColumn, setActiveColumn, cards }: ColumnProps) {
+function Column({
+  title,
+  activeColumn,
+  setActiveColumn,
+  cards,
+  columnColor: cc,
+}: ColumnProps) {
   const [adding, setAdding] = useState<boolean>(false);
-  const tasks = useAppSelector(selectAllTasks);
-  const columnCards = tasks.filter((c) => c.column === title);
-
-  const columnColor = ColumnColors[title as ColumnType];
-
-  const toggleAdding = () => setAdding((p) => !p);
   const columnRef = useRef(null);
   const dispatch = useAppDispatch();
+
+  const columnCards = cards.filter((c) => c.column === title);
+  const columnColor = ColumnColors[title as ColumnType];
+  const toggleAdding = () => setAdding((p) => !p);
 
   useEffect(() => {
     const el = columnRef.current;
@@ -107,8 +112,9 @@ function Column({ title, activeColumn, setActiveColumn, cards }: ColumnProps) {
 
   return (
     <div
+      data-theme={cc}
       className={cn(
-        "min-h-full flex-1 min-w-[280px]  p-2 group rounded-md bg-[#1D2226]",
+        "min-h-full flex-1 min-w-[280px]  p-2 group rounded-md bg-accent-1",
         activeColumn === title && "bg-sky-800"
       )}
       ref={columnRef}
@@ -149,19 +155,22 @@ export const ColumnHeader = ({
     <div className="flex">
       {/* The Pill */}
       <div
-        className={`
-          ${columnColor.bg} flex gap-1 items-center pl-[7px] pr-[9px] rounded-3xl`}
+        className={cn(
+          columnColor.bg,
+          "flex gap-1 items-center pl-[7px] pr-[9px] rounded-3xl"
+        )}
       >
-        <div className={`${columnColor.circle} w-2 h-2 rounded-full`} />
+        <div className={cn("w-2 h-2 rounded-full", columnColor.circle)} />
         <h1 className="text-sm font-bold">{title}</h1>
       </div>
 
       {/* The Count */}
       <div className="ml-1 flex place-items-center">
         <button
-          className={`
-            ${columnColor.text} 
-            text-sm py-1 px-2 hover:bg-gray-800 transition-colors rounded-md`}
+          className={cn(
+            columnColor.text,
+            "text-sm py-1 px-2 hover:bg-gray-800 transition-colors rounded-md"
+          )}
         >
           {total}
         </button>
@@ -173,12 +182,18 @@ export const ColumnHeader = ({
       {/* The buttons */}
       <div className="flex place-items-center">
         <button
-          className={`${columnColor.text} text-sm py-1 px-2 hover:bg-gray-800 transition-colors rounded-md opacity-0  group-hover:opacity-100 font-extrabold`}
+          className={cn(
+            columnColor.text,
+            "text-sm py-1 px-2 hover:bg-gray-800 transition-colors rounded-md opacity-0  group-hover:opacity-100 font-extrabold"
+          )}
         >
           <HiOutlineDotsHorizontal size={23} />
         </button>
         <button
-          className={`${columnColor.text} text-sm py-1 px-2 hover:bg-gray-800 transition-colors rounded-md opacity-0  group-hover:opacity-100 font-extrabold`}
+          className={cn(
+            columnColor.text,
+            "text-sm py-1 px-2 hover:bg-gray-800 transition-colors rounded-md opacity-0  group-hover:opacity-100 font-extrabold"
+          )}
           onClick={toggleAdding}
         >
           <MdAdd size={23} />
@@ -204,7 +219,10 @@ export const NewCard = ({
       {/* New Button */}
       {!adding && (
         <button
-          className={`${color} text-sm w-full p-2 flex gap-2 items-center mt-1.5 hover:bg-gray-800 transition-colors rounded-md font-semibold text-start`}
+          className={cn(
+            color,
+            "text-sm w-full p-2 flex gap-2 items-center mt-1.5 hover:bg-gray-800 transition-colors rounded-md font-semibold text-start"
+          )}
           onClick={toggleAdding}
         >
           <MdAdd size={18} /> New
