@@ -9,12 +9,11 @@ type CardProps = {
   id: string;
   title: string;
   column: string;
-  color: string;
 };
 
 // Custom DragPreview
 
-function Card({ id, title, column, color }: CardProps) {
+function Card({ id, title, column }: CardProps) {
   const [editing, setEditing] = useState(false);
 
   const contentEditableRef = useRef(null);
@@ -56,9 +55,8 @@ function Card({ id, title, column, color }: CardProps) {
     <div className="relative group/card" ref={draggableRef}>
       <div
         className={cn(
-          "active:cursor-grabbing text-sm w-full py-3 px-2 hover:bg-opacity-50 transition-colors rounded-md font-semibold text-start empty:before:content-['Untitled...'] empty:before:text-neutral-400 cursor-grab",
+          "active:cursor-grabbing text-sm w-full py-3 px-2 hover:bg-accent-1/35 transition-colors rounded-md font-semibold text-start empty:before:content-['Untitled...'] empty:before:text-neutral-400 cursor-grab bg-accent-2",
           editing && "cursor-auto",
-          color
         )}
         contentEditable={editing}
         suppressContentEditableWarning={true}

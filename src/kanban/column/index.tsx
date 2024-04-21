@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Card from "@/kanban/card";
 import { AddCard } from "./addCard";
 import { MdAdd } from "react-icons/md";
@@ -13,7 +13,6 @@ import {
 import { cn } from "@/utils/cn";
 import { updateCard } from "@/store/taskSlice";
 import { useAppDispatch } from "@/store/store";
-import { ColumnColors, ColumnType } from "../colors";
 
 export type ColumnProps = {
   title: string;
@@ -25,18 +24,12 @@ export type ColumnProps = {
 
 export type NewCardProps = {
   title: string;
-  color: string;
   adding: boolean;
   toggleAdding: () => void;
 };
 
 export type ColumnHeaderProps = {
   title: string;
-  columnColor: {
-    bg: string;
-    text: string;
-    circle: string;
-  };
   toggleAdding: () => void;
   total: number;
 };
@@ -46,14 +39,13 @@ function Column({
   activeColumn,
   setActiveColumn,
   cards,
-  columnColor: cc,
+  columnColor,
 }: ColumnProps) {
   const [adding, setAdding] = useState<boolean>(false);
   const columnRef = useRef(null);
   const dispatch = useAppDispatch();
 
   const columnCards = cards.filter((c) => c.column === title);
-  const columnColor = ColumnColors[title as ColumnType];
   const toggleAdding = () => setAdding((p) => !p);
 
   useEffect(() => {
@@ -112,66 +104,49 @@ function Column({
 
   return (
     <div
-      data-theme={cc}
+      data-theme={columnColor}
       className={cn(
-        "min-h-full flex-1 min-w-[280px]  p-2 group rounded-md bg-accent-1",
+        "flex-1 min-w-[280px] h-fit p-2 group rounded-md bg-accent-3",
         activeColumn === title && "bg-sky-800"
       )}
       ref={columnRef}
     >
       {/* ******** Header */}
-      <MemoizedColumnHeader
+      <ColumnHeader
         title={title}
-        columnColor={columnColor}
         total={columnCards.length}
         toggleAdding={toggleAdding}
       />
 
       {/* ******** The Cards */}
-      <div className=" flex flex-col gap-2 mt-6">
+      <div className=" flex flex-col gap-[5px] mt-6">
         {columnCards.map((card) => (
-          <Card key={card.id} {...card} color={columnColor.bg} />
+          <Card key={card.id} {...card} />
         ))}
       </div>
 
       {/* ******** New Card */}
-      <NewCard
-        title={title}
-        color={columnColor.text}
-        adding={adding}
-        toggleAdding={toggleAdding}
-      />
+      <NewCard title={title} adding={adding} toggleAdding={toggleAdding} />
     </div>
   );
 }
 
 export const ColumnHeader = ({
   title,
-  columnColor,
   total,
   toggleAdding,
 }: ColumnHeaderProps) => {
   return (
     <div className="flex">
       {/* The Pill */}
-      <div
-        className={cn(
-          columnColor.bg,
-          "flex gap-1 items-center pl-[7px] pr-[9px] rounded-3xl"
-        )}
-      >
-        <div className={cn("w-2 h-2 rounded-full", columnColor.circle)} />
-        <h1 className="text-sm font-bold">{title}</h1>
+      <div className="flex gap-1 items-center pl-[7px] pr-[9px] rounded-3xl bg-accent-2">
+        <div className="w-2 h-2 rounded-full bg-accent-1" />
+        <h1 className="text-sm font-bold mt-[-2px]">{title}</h1>
       </div>
 
       {/* The Count */}
       <div className="ml-1 flex place-items-center">
-        <button
-          className={cn(
-            columnColor.text,
-            "text-sm py-1 px-2 hover:bg-gray-800 transition-colors rounded-md"
-          )}
-        >
+        <button className="text-accent-1 text-sm py-1 px-2 rounded-md cursor-auto">
           {total}
         </button>
       </div>
@@ -181,36 +156,21 @@ export const ColumnHeader = ({
 
       {/* The buttons */}
       <div className="flex place-items-center">
-        <button
-          className={cn(
-            columnColor.text,
-            "text-sm py-1 px-2 hover:bg-gray-800 transition-colors rounded-md opacity-0  group-hover:opacity-100 font-extrabold"
-          )}
-        >
-          <HiOutlineDotsHorizontal size={23} />
+        <button className="text-sm py-1 px-2 hover:bg-accent-2/35 transition-colors rounded-md opacity-0  group-hover:opacity-100 font-extrabold text-accent-1">
+          <HiOutlineDotsHorizontal size={18} />
         </button>
         <button
-          className={cn(
-            columnColor.text,
-            "text-sm py-1 px-2 hover:bg-gray-800 transition-colors rounded-md opacity-0  group-hover:opacity-100 font-extrabold"
-          )}
+          className="text-sm py-1 px-2 hover:bg-accent-2/35 transition-colors rounded-md opacity-0  group-hover:opacity-100 font-extrabold text-accent-1"
           onClick={toggleAdding}
         >
-          <MdAdd size={23} />
+          <MdAdd size={18} />
         </button>
       </div>
     </div>
   );
 };
 
-const MemoizedColumnHeader = memo(ColumnHeader);
-
-export const NewCard = ({
-  title,
-  color,
-  adding,
-  toggleAdding,
-}: NewCardProps) => {
+export const NewCard = ({ title, adding, toggleAdding }: NewCardProps) => {
   return (
     <>
       {/* *********  New Card */}
@@ -219,10 +179,7 @@ export const NewCard = ({
       {/* New Button */}
       {!adding && (
         <button
-          className={cn(
-            color,
-            "text-sm w-full p-2 flex gap-2 items-center mt-1.5 hover:bg-gray-800 transition-colors rounded-md font-semibold text-start"
-          )}
+          className="text-sm w-full p-2 flex gap-2 items-center mt-1.5 hover:bg-accent-2/25 transition-colors duration-200 rounded-md font-semibold text-start text-accent-1"
           onClick={toggleAdding}
         >
           <MdAdd size={18} /> New

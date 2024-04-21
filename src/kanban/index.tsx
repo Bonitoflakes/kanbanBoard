@@ -11,20 +11,25 @@ function Kanban() {
   if (isError) return <div>Error: {JSON.stringify(error)}</div>;
   invariant(data);
 
-
   return (
     <>
-      <div className="flex bg-primary w-full h-full gap-4 p-4 overflow-x-auto">
-        {Object.entries(data).map(([key, value]) => (
-          <Column
-            key={key}
-            columnColor={value.colorSpace}
-            cards={value.cards}
-            title={value.title}
-            activeColumn={activeColumn}
-            setActiveColumn={setActiveColumn}
-          />
-        ))}
+      <div className="flex flex-col w-full h-full gap-4 p-4 overflow-x-auto bg-primary">
+        <div className="flex">
+          <h1 className="pl-2 font-sans text-3xl font-bold">Kanban Board</h1>
+        </div>
+
+        <div className="flex gap-4">
+          {Object.entries(data).map(([key, value]) => (
+            <Column
+              key={key}
+              columnColor={value.colorSpace}
+              cards={value.cards}
+              title={value.title}
+              activeColumn={activeColumn}
+              setActiveColumn={setActiveColumn}
+            />
+          ))}
+        </div>
       </div>
     </>
   );

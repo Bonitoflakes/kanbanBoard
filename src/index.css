@@ -4,10 +4,10 @@
 
 @layer base {
   :root[data-theme="dark"] {
-    --accent-1: 346.8deg 77.2% 49.8%;
+    --primary: var(--dark-bg);
   }
   :root[data-theme="light"] {
-    --accent-1: 36deg 53% 35%;
+    --primary: var(--light-bg);
   }
 
   [data-theme="rose"] {
@@ -43,6 +43,12 @@
     --accent-2: var(--brownMedium);
     --accent-3: var(--brownDark);
   }
+
+  [data-theme="purple"] {
+    --accent-1: var(--purpleLight);
+    --accent-2: var(--purpleMedium);
+    --accent-3: var(--purpleDark);
+  }
   [data-theme="gray"] {
     --accent-1: var(--grayLight);
     --accent-2: var(--grayMedium);
@@ -51,25 +57,28 @@
 }
 
 :root {
-  --redLight: 2deg 58% 54%;
-  --redMedium: 3.3, 45.9%, 38.4%;
-  --redDark: 5.8, 39.2%, 31%;
+  --dark-bg: 0deg 0% 10%;
+  --light-bg: 0deg 11% 88%;
+
+  --redLight: 1deg 57% 54%;
+  --redMedium: 8deg 32% 24%;
+  --redDark: 9deg 11% 13%;
 
   --purpleLight: 269deg 45% 56%;
-  --purpleMedium: 270deg 33.9% 43.9%;
-  --purpleDark: 269.4deg 36.1% 28.8%;
+  --purpleMedium: 272deg 20% 19%;
+  --purpleDark: 269.4deg 8.1% 13.8%;
 
   --blueLight: 211.3deg 63.9% 50%;
-  --blueMedium: 212.8deg 56.8% 37.3%;
-  --blueDark: 214.4deg 45.9% 29%;
+  --blueMedium: 200deg 36% 16%;
+  --blueDark: 214deg 11% 13%;
 
   --greenLight: 150.6deg 54.5% 38.8%;
   --greenMedium: 148.8deg 44.8% 32%;
-  --greenDark: 146.1deg 34.8% 25.9%;
+  --greenDark: 140deg 9% 13%;
 
   --yellowLight: 39.4deg 76.4% 44.9%;
-  --yellowMedium: 37.5deg 63.2% 37.3%;
-  --yellowDark: 36deg 53% 35%;
+  --yellowMedium: 31deg 29% 20%;
+  --yellowDark: 33deg 15% 12%;
 
   --orangeLight: 28deg 74.2% 48.6%;
   --orangeMedium: 28deg 73% 38%;
@@ -102,6 +111,6 @@ body {
   width: 100%;
 }
 
-#root{
+#root {
   width: 100%;
 }

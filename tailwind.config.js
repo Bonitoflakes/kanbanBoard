@@ -4,10 +4,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "hsl(var(--primary))",
-        secondary: "hsl(var(--secondary))",
-        tertiary: "hsl(var(--tertiary))",
-        "accent-1": "hsl(var(--accent-1))",
+        primary: "hsl(var(--primary)/ <alpha-value>)",
+        secondary: "hsl(var(--secondary)/ <alpha-value>)",
+        tertiary: "hsl(var(--tertiary)/ <alpha-value>)",
+        "accent-1": "hsl(var(--accent-1)/ <alpha-value>)",
+        "accent-2": "hsl(var(--accent-2)/ <alpha-value>)",
+        "accent-3": "hsl(var(--accent-3)/ <alpha-value>)",
       },
     },
   },
