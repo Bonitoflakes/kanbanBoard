@@ -29,15 +29,15 @@
 
     --orangeLight: 28deg 74.2% 48.6%;
     --orangeMedium: 28deg 73% 38%;
-    --orangeDark: 27.1deg 64.2% 31.8%;
+    --orangeDark: 20.1deg 14% 13.8%;
 
     --brownLight: 17.6deg 30.6% 52%;
     --brownMedium: 18.8deg 34% 38.6%;
-    --brownDark: 17.3deg 37.1% 27.5%;
+    --brownDark: 17.3deg 11.1% 13.5%;
 
-    --grayLight: 0deg 0% 50.2%;
-    --grayMedium: 0deg 0.7% 27.3%;
-    --grayDark: 0deg 1.3% 15.1%;
+    --grayLight: 0deg 0% 61%;
+    --grayMedium: 0deg 0% 18%;
+    --grayDark: 0deg 0% 13%;
   }
 
   :root[data-theme="light"] {
@@ -52,13 +52,13 @@
     hsl(9, 100%, 93%)
     hsl(5, 67%, 64%) */
 
-    --purpleLight: 274deg 35% 64%;
-    --purpleMedium: 278deg 32% 90%;
-    --purpleDark: 270deg 50% 98%;
+    --yellowLight: 38deg 60% 50%;
+    --yellowMedium: 41deg 93% 89%;
+    --yellowDark: 45deg 50% 97%;
 
-    /* hsl(270, 50%, 98%)
-    hsl(278, 32%, 90%)
-    hsl(274, 35%, 64%) */
+    /* hsl(45, 50%, 97%)
+    hsl(41, 93%, 89%)
+    hsl(38, 60%, 50%) */
 
     --blueLight: 204deg 42% 55%;
     --blueMedium: 203deg 47% 88%;
@@ -68,32 +68,48 @@
     hsl(203, 47%, 88%)
     hsl(204, 42%, 55%) */
 
-    --greenLight: 150.6deg 54.5% 38.8%;
-    --greenMedium: 148.8deg 44.8% 32%;
-    --greenDark: 140deg 9% 13%;
+    --purpleLight: 274deg 35% 64%;
+    --purpleMedium: 278deg 32% 90%;
+    --purpleDark: 270deg 50% 98%;
 
-    --yellowLight: 38deg 60% 50%;
-    --yellowMedium: 41deg 93% 89%;
-    --yellowDark: 45deg 50% 97%;
+    /* hsl(270, 50%, 98%)
+    hsl(278, 32%, 90%)
+    hsl(274, 35%, 64%) */
 
-    /* hsl(45, 50%, 97%)
-    hsl(41, 93%, 89%)
-    hsl(38, 60%, 50%) */
+    --greenLight: 141deg 20% 52%;
+    --greenMedium: 120.8deg 32% 89%;
+    --greenDark: 105.6deg 33% 98%;
 
-    --orangeLight: 28deg 74.2% 48.6%;
-    --orangeMedium: 28deg 73% 38%;
-    --orangeDark: 27.1deg 64.2% 31.8%;
+    /* hsl(105, 33%, 98%)
+    hsl(120, 32%, 89%)
+    hsl(141, 20%, 52%) */
 
-    --brownLight: 17.6deg 30.6% 52%;
-    --brownMedium: 18.8deg 34% 38.6%;
-    --brownDark: 17.3deg 37.1% 27.5%;
+    --orangeLight: 27deg 66% 54%;
+    --orangeMedium: 26deg 83% 89%;
+    --orangeDark: 17deg 64% 98%;
 
-    --grayLight: 0deg 0% 50.2%;
-    --grayMedium: 0deg 0.7% 27.3%;
-    --grayDark: 0deg 1.3% 15.1%;
+    /* hsl(17, 64%, 98%)
+    hsl(26, 83%, 89%)
+    hsl(27, 66%, 54%) */
+
+    --brownLight: 17.3deg 37% 58%;
+    --brownMedium: 17.8deg 40% 89%;
+    --brownDark: 20deg 27% 98%;
+
+    /* hsl(20, 27%, 98%)
+    hsl(17, 40%, 89%)
+    hsl(17, 37%, 58%) */
+
+    --grayLight: 60deg 1% 56%;
+    --grayMedium: 40deg 5% 89%;
+    --grayDark: 60deg 8% 98%;
+
+    /* hsl(60, 1%, 56%) 
+     hsl(40, 5%, 89%) 
+     hsl(60, 8%, 98%) */
   }
 
-  [data-theme="rose"] {
+  [data-theme="red"] {
     --accent-1: var(--redLight);
     --accent-2: var(--redMedium);
     --accent-3: var(--redDark);
@@ -153,7 +169,7 @@
 }
 
 * {
-  @apply transition-colors duration-200;
+  @apply transition-colors duration-150;
 }
 
 body {

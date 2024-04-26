@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
-import { CardOptions } from "@/components/cardOptions";
+import { CardOptions } from "@/features/kanban/card/cardOptions";
 import moveCaretToEnd from "@/utils/moveCaret";
 import { useDeleteTaskMutation, useUpdateTaskMutation } from "@/store/api";
 import { cn } from "@/utils/cn";
@@ -39,7 +39,6 @@ function Card({ id, title, column }: CardProps) {
 
   const handleSave = (e: { target: { innerText: string } }) => {
     setEditing((p) => !p);
-
     updateTask({
       id: id,
       title: String(e.target.innerText).trim() || "",

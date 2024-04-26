@@ -4,9 +4,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 type Column = {
   id: string;
   title: string;
+  colorSpace: string;
 };
-
-type NewType = Omit<Card, "id">;
 
 type Card = {
   id: string;
@@ -14,16 +13,21 @@ type Card = {
   column: string;
 };
 
-type ColumnMap = {
-  [key: string]: {
+type NewColumn = Omit<Column, "id">;
+type NewCard = Omit<Card, "id">;
+
+type ColumnMap = Record<
+  string,
+  {
     id: string;
     title: string;
     count: string;
     colorSpace: string;
-    cards: Card[];
-  };
-};
+    cards: Array<Card>;
+  }
+>;
 
+// NOTE: Return TYPE, QueryParam TYPE
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
@@ -32,14 +36,9 @@ export const api = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Tasks", "Columns"],
+  tagTypes: ["Tasks"],
 
   endpoints: (builder) => ({
-    getColumns: builder.query<Column[], void>({
-      query: () => "/columns",
-      providesTags: ["Columns"],
-    }),
-
     getGroupedTasks: builder.query<ColumnMap, void>({
       query: () => "/columnmap",
       providesTags: (result, error) => {
@@ -59,17 +58,33 @@ export const api = createApi({
       },
     }),
 
-    getTaskByID: builder.query<Card, string>({
-      query: (id) => `/cards/${id}`,
-      providesTags: (result) => [
-        {
-          type: "Tasks",
-          id: generateTaskID(result!.id, result!.title),
-        },
-      ],
+    addColumn: builder.mutation<Column, NewColumn>({
+      query: ({ title, colorSpace }) => ({
+        url: "/columns",
+        method: "POST",
+        body: { title, colorSpace },
+      }),
+      invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
-    addTask: builder.mutation<Card, NewType>({
+    updateColumn: builder.mutation<Column, Column>({
+      query: (column) => ({
+        url: `/columns/${column.id}`,
+        method: "PATCH",
+        body: column,
+      }),
+      invalidatesTags: () => [{ type: "Tasks", id: "LIST" }],
+    }),
+
+    deleteColumn: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/columns/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "Tasks", id: "LIST" }],
+    }),
+
+    addTask: builder.mutation<Card, NewCard>({
       query: (task) => ({
         url: "/cards",
         method: "POST",
@@ -98,10 +113,11 @@ export const api = createApi({
 });
 
 export const {
-  useGetColumnsQuery,
+  useAddColumnMutation,
+  useUpdateColumnMutation,
+  useDeleteColumnMutation,
   useGetGroupedTasksQuery,
-  useGetTaskByIDQuery,
   useAddTaskMutation,
-  useDeleteTaskMutation,
   useUpdateTaskMutation,
+  useDeleteTaskMutation,
 } = api;

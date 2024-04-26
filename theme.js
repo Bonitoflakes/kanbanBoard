@@ -27,4 +27,3 @@ window
       document.documentElement.classList.remove("dark");
     }
   });
-
