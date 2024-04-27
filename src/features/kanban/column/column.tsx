@@ -1,28 +1,35 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import Card from "@/features/kanban/card/card";
 import { cn } from "@/utils/cn";
-import { NewCardButton } from "./newCardButton";
-import { ColumnHeader } from "./column/header/header";
+import { NewCardButton } from "./newCard";
+import { ColumnHeader } from "./header/header";
+import { useToggle } from "@/utils/useToggle";
 
 export type ColumnProps = {
   id: number;
   title: string;
   activeColumn: string;
-  columnColor: string;
-  cards: { id: string; title: string; column: string }[];
+  colorSpace: string;
+  count: number;
+  cards: Array<{ id: number; title: string; column: string }>;
 };
 
-function Column({ title, activeColumn, cards, columnColor, id }: ColumnProps) {
-  const [adding, setAdding] = useState<boolean>(false);
-
+function Column({
+  id,
+  title,
+  colorSpace,
+  count,
+  cards,
+  activeColumn,
+}: ColumnProps) {
+  const [adding, toggleAdding] = useToggle();
   const columnRef = useRef(null);
 
   const columnCards = cards.filter((c) => c.column === title);
-  const toggleAdding = () => setAdding((p) => !p);
 
   return (
     <div
-      data-theme={columnColor}
+      data-theme={colorSpace}
       className={cn(
         "group/column h-fit min-w-[280px] flex-1 rounded-md bg-accent-3 p-2",
         activeColumn === title && "bg-sky-800",
@@ -32,12 +39,12 @@ function Column({ title, activeColumn, cards, columnColor, id }: ColumnProps) {
       <ColumnHeader
         title={title}
         id={id}
-        color={columnColor}
-        total={columnCards.length}
+        color={colorSpace}
+        total={count}
         toggleAdding={toggleAdding}
       />
 
-      <div className=" mt-6 flex flex-col gap-[5px]">
+      <div className="mt-6 flex flex-col gap-[5px]">
         {columnCards.map((card) => (
           <Card key={card.id} {...card} />
         ))}

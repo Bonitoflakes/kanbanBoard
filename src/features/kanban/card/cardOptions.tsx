@@ -1,9 +1,9 @@
 import { MdDelete, MdEdit } from "react-icons/md";
 
 type CardOptionsProps = {
-  id: string;
+  id: number;
   handleEdit: (e: { preventDefault: () => void }) => void;
-  handleDelete: (id: string) => void;
+  handleDelete: (id: number) => void;
 };
 
 export function CardOptions({

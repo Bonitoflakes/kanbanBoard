@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import { CardOptions } from "@/features/kanban/card/cardOptions";
 import moveCaretToEnd from "@/utils/moveCaret";
@@ -6,26 +6,17 @@ import { useDeleteTaskMutation, useUpdateTaskMutation } from "@/store/api";
 import { cn } from "@/utils/cn";
 
 type CardProps = {
-  id: string;
+  id: number;
   title: string;
   column: string;
 };
 
-// Custom DragPreview
-
 function Card({ id, title, column }: CardProps) {
   const [editing, setEditing] = useState(false);
-
   const contentEditableRef = useRef(null);
-  const draggableRef = useRef(null);
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
-
-  useEffect(() => {
-    const el = draggableRef.current;
-    invariant(el);
-  }, []);
 
   const handleEdit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -46,12 +37,12 @@ function Card({ id, title, column }: CardProps) {
     });
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     deleteTask(id);
   };
 
   return (
-    <div className="group/card relative" ref={draggableRef}>
+    <div className="group/card relative">
       <div className="rounded-md bg-accent-2 transition-colors hover:bg-accent-1/35">
         <div
           className={cn(

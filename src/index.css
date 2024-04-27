@@ -183,3 +183,29 @@ body {
 #root {
   width: 100%;
 }
+
+.slideinright {
+  animation: slideinright 0.5s ease-in-out forwards;
+}
+
+.slideoutright {
+  animation: slideoutright 0.5s ease-in-out forwards;
+}
+
+@keyframes slideinright {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slideoutright {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}

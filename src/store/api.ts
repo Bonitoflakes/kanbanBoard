@@ -2,13 +2,13 @@ import { generateTaskID } from "@/utils/generateTaskID";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 type Column = {
-  id: string;
+  id: number;
   title: string;
   colorSpace: string;
 };
 
 type Card = {
-  id: string;
+  id: number;
   title: string;
   column: string;
 };
@@ -19,9 +19,9 @@ type NewCard = Omit<Card, "id">;
 type ColumnMap = Record<
   string,
   {
-    id: string;
+    id: number;
     title: string;
-    count: string;
+    count: number;
     colorSpace: string;
     cards: Array<Card>;
   }
@@ -102,7 +102,7 @@ export const api = createApi({
       invalidatesTags: () => [{ type: "Tasks", id: "LIST" }],
     }),
 
-    deleteTask: builder.mutation<void, string>({
+    deleteTask: builder.mutation<void, number>({
       query: (id) => ({
         url: `/cards/${id}`,
         method: "DELETE",

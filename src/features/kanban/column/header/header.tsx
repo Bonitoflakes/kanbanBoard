@@ -131,6 +131,7 @@ export const ColumnHeader = ({
                   {Object.entries(colors).map(([key, value]) => {
                     return (
                       <DropdownMenu.RadioItem
+                        key={key}
                         className={cn(
                           "h-8 w-11 rounded-md text-secondary outline-none hover:outline-dashed hover:outline-1 hover:outline-secondary",
                           activeColor === key && "border-2 border-blue-800",
