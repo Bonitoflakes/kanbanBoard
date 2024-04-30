@@ -40,7 +40,7 @@ function Column({
         title={title}
         id={id}
         color={colorSpace}
-        total={count}
+        count={count}
         toggleAdding={toggleAdding}
       />
 

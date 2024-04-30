@@ -1,15 +1,15 @@
-import { MdAdd } from "react-icons/md";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { useState } from "react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { MdAdd } from "react-icons/md";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { useUpdateColumnMutation } from "@/store/api";
 import { cn } from "@/utils/cn";
 import { Alert } from "./alert";
-import { useUpdateColumnMutation } from "@/store/api";
 
 export type ColumnHeaderProps = {
   title: string;
   toggleAdding: () => void;
-  total: number;
+  count: number;
   id: number;
   color: string;
 };
@@ -27,7 +27,7 @@ const colors = {
 
 export const ColumnHeader = ({
   title,
-  total,
+  count,
   toggleAdding,
   color,
   id,
@@ -41,7 +41,7 @@ export const ColumnHeader = ({
   const handleColor = (color: string) => {
     console.log(color);
     setActiveColor(color);
-    updateColumn({ id: id.toString(), colorSpace: color, title });
+    updateColumn({ id, colorSpace: color, title });
   };
 
   const popoverOnChange = (e: boolean) => {
@@ -65,9 +65,9 @@ export const ColumnHeader = ({
 
       {/* The Count */}
       <div className="ml-1 flex place-items-center">
-        <button className="cursor-auto rounded-md px-2 py-1 text-sm text-accent-1">
-          {total}
-        </button>
+        <p className="cursor-auto rounded-md px-2 py-1 text-sm text-accent-1">
+          {count}
+        </p>
       </div>
 
       {/* The Divider */}

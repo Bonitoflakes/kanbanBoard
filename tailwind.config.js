@@ -12,19 +12,9 @@ export default {
         "accent-2": "hsl(var(--accent-2)/ <alpha-value>)",
         "accent-3": "hsl(var(--accent-3)/ <alpha-value>)",
       },
-      boxShadow: {
-        primary:
-          "0px 0px 0px 1px rgba(15, 15, 15, 0.04), 0px 3px 6px rgba(15, 15, 15, 0.03), 0px 9px 24px rgba(15, 15, 15, 0.06)",
-      },
-      keyframes: {
-        slideInRight: {
-          "0%": { translate: "100%" },
-          "100%": { translate: "0%" },
-        },
-      },
-      animation: {
-        slideInRight: "slideInRight 1s ease-in-out",
-      },
+      boxShadow: {},
+      keyframes: {},
+      animation: {},
     },
   },
   plugins: [],

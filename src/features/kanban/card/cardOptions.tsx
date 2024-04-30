@@ -2,7 +2,7 @@ import { MdDelete, MdEdit } from "react-icons/md";
 
 type CardOptionsProps = {
   id: number;
-  handleEdit: (e: { preventDefault: () => void }) => void;
+  handleEdit: (e: MouseEvent) => void;
   handleDelete: (id: number) => void;
 };
 
@@ -16,6 +16,7 @@ export function CardOptions({
       <button
         title="Edit"
         className="rounded-s-lg bg-primary px-2 py-2 hover:bg-gray-400 dark:hover:bg-gray-600"
+        //  @ts-expect-error: Fix event types
         onClick={handleEdit}
       >
         <MdEdit className="text-secondary" />
@@ -26,7 +27,10 @@ export function CardOptions({
       <button
         title="Delete"
         className=" rounded-e-lg bg-primary px-2 py-2 hover:bg-red-400 dark:hover:bg-red-800"
-        onClick={() => handleDelete(id)}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleDelete(id);
+        }}
       >
         <MdDelete className="text-secondary " />
       </button>

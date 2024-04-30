@@ -1,4 +1,3 @@
-import { generateTaskID } from "@/utils/generateTaskID";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 type Column = {
@@ -11,10 +10,12 @@ type Card = {
   id: number;
   title: string;
   column: string;
+  description: string;
+  order: number;
 };
 
 type NewColumn = Omit<Column, "id">;
-type NewCard = Omit<Card, "id">;
+type NewCard = Omit<Card, "id" | "order" | "description">;
 
 type ColumnMap = Record<
   string,
@@ -26,6 +27,18 @@ type ColumnMap = Record<
     cards: Array<Card>;
   }
 >;
+
+export function providesList<
+  R extends { id: string | number }[],
+  T extends string,
+>(resultsWithIds: R | undefined, tagType: T) {
+  return resultsWithIds
+    ? [
+        { type: tagType, id: "LIST" },
+        ...resultsWithIds.map(({ id }) => ({ type: tagType, id })),
+      ]
+    : [{ type: tagType, id: "LIST" }];
+}
 
 // NOTE: Return TYPE, QueryParam TYPE
 export const api = createApi({
@@ -46,15 +59,11 @@ export const api = createApi({
         if (!result) return [{ type: "Tasks", id: "LIST" }];
 
         const tags = Object.entries(result)
-          .map(([, { cards }]) => cards)
-          .flat()
-          .map(({ title, id }) => {
-            return [{ type: "Tasks" as const, id: generateTaskID(id, title) }];
-          })
-          .flat()
-          .concat([{ type: "Tasks", id: "LIST" }]);
+          .flatMap(([, { cards }]) => cards)
+          .map(({ id }) => ({ type: "Tasks" as const, id: id }));
 
-        return tags;
+        return [...tags, { type: "Tasks", id: "LIST" }];
+        return [{ type: "Tasks", id: "LIST" }];
       },
     }),
 
@@ -84,6 +93,13 @@ export const api = createApi({
       invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
+    getTask: builder.query<Card, number>({
+      query: (id) => `/cards/${id}`,
+      providesTags: (_result, _error, id) => [
+        { type: "Tasks" as const, id: id },
+      ],
+    }),
+
     addTask: builder.mutation<Card, NewCard>({
       query: (task) => ({
         url: "/cards",
@@ -93,13 +109,13 @@ export const api = createApi({
       invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
-    updateTask: builder.mutation<Card, Card>({
+    updateTask: builder.mutation<Card, Partial<Card>>({
       query: (task) => ({
         url: `/cards/${task.id}`,
         method: "PATCH",
         body: task,
       }),
-      invalidatesTags: () => [{ type: "Tasks", id: "LIST" }],
+      invalidatesTags: (_r, _e, arg) => [{ type: "Tasks", id: arg.id }],
     }),
 
     deleteTask: builder.mutation<void, number>({
@@ -113,10 +129,13 @@ export const api = createApi({
 });
 
 export const {
+  useGetGroupedTasksQuery,
+
   useAddColumnMutation,
   useUpdateColumnMutation,
   useDeleteColumnMutation,
-  useGetGroupedTasksQuery,
+
+  useGetTaskQuery,
   useAddTaskMutation,
   useUpdateTaskMutation,
   useDeleteTaskMutation,

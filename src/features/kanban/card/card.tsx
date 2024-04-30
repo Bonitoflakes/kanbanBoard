@@ -1,9 +1,11 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import invariant from "tiny-invariant";
 import { CardOptions } from "@/features/kanban/card/cardOptions";
 import moveCaretToEnd from "@/utils/moveCaret";
 import { useDeleteTaskMutation, useUpdateTaskMutation } from "@/store/api";
 import { cn } from "@/utils/cn";
+import { useToggle } from "@/utils/useToggle";
+import { useSidebar } from "../sidepeek/sidePeekContext";
 
 type CardProps = {
   id: number;
@@ -12,15 +14,19 @@ type CardProps = {
 };
 
 function Card({ id, title, column }: CardProps) {
-  const [editing, setEditing] = useState(false);
+  const { toggleSidebar, setSidebarData } = useSidebar();
+
+  const [editing, toggleEditing] = useToggle(false);
   const contentEditableRef = useRef(null);
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
 
-  const handleEdit = (e: { preventDefault: () => void }) => {
+  const handleEdit = (e: MouseEvent) => {
     e.preventDefault();
-    setEditing((p) => !p);
+    e.stopPropagation();
+
+    toggleEditing();
 
     requestAnimationFrame(() => {
       invariant(contentEditableRef.current);
@@ -28,11 +34,13 @@ function Card({ id, title, column }: CardProps) {
     });
   };
 
-  const handleSave = (e: { target: { innerText: string } }) => {
-    setEditing((p) => !p);
+  const handleSave = (e: FocusEvent) => {
+    e.stopPropagation();
+
+    toggleEditing();
     updateTask({
       id: id,
-      title: String(e.target.innerText).trim() || "",
+      title: String((e.target as HTMLDivElement).innerText).trim(),
       column: column,
     });
   };
@@ -41,17 +49,27 @@ function Card({ id, title, column }: CardProps) {
     deleteTask(id);
   };
 
+  const openSidePeek = () => {
+    toggleSidebar(true);
+    setSidebarData(id);
+  };
+
   return (
-    <div className="group/card relative">
+    <div
+      className="group/card relative"
+      onClick={openSidePeek}
+      data-type="card"
+    >
       <div className="rounded-md bg-accent-2 transition-colors hover:bg-accent-1/35">
         <div
           className={cn(
-            "w-full cursor-grab break-all rounded-md px-2 py-3 text-start text-sm font-semibold text-secondary empty:before:text-neutral-400 empty:before:content-['Untitled...'] active:cursor-grabbing dark:empty:before:text-neutral-400",
-            editing && "cursor-auto ",
+            "w-full cursor-pointer break-all rounded-md px-2 py-3 text-start text-sm font-semibold text-secondary empty:before:text-neutral-400 empty:before:content-['Untitled...'] active:cursor-grabbing dark:empty:before:text-neutral-400",
+            editing && "cursor-auto",
           )}
           contentEditable={editing}
           suppressContentEditableWarning={true}
           ref={contentEditableRef}
+          //  @ts-expect-error: Fix event types
           onBlur={handleSave}
         >
           {title}
