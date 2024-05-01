@@ -1,8 +1,8 @@
-import { useGetGroupedTasksQuery, useUpdateTaskMutation } from "@/store/api";
-import * as D from "@radix-ui/react-dropdown-menu";
 import { useEffect, useState } from "react";
 import { MdCloseFullscreen } from "react-icons/md";
 import invariant from "tiny-invariant";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { useGetGroupedTasksQuery, useUpdateTaskMutation } from "@/store/api";
 
 type Card = {
   id: number;
@@ -15,49 +15,54 @@ type Card = {
 function Settings({ cardData }: { cardData: Card }) {
   const [selectedColumn, setSelectedColumn] = useState<string>(cardData.column);
   const [selectedPos, setSelectedPos] = useState<number>(cardData.order);
-
   const { data: groupedTasks } = useGetGroupedTasksQuery();
   const [updateTask] = useUpdateTaskMutation();
 
   invariant(groupedTasks);
 
   const handleMove = () => {
-    updateTask({
-      id: cardData.id,
-      column: selectedColumn,
-      order: selectedPos,
-    });
+    updateTask({ id: cardData.id, column: selectedColumn, order: selectedPos });
   };
-
-  const isSameColumn = selectedColumn === cardData.column;
-
-  const formattedData = Object.entries(groupedTasks).map(
-    ([column, { count }]) => ({ type: column, count }),
-  );
-
-  const calculatePositions = () => {
-    const count =
-      formattedData.find((d) => d.type === selectedColumn)?.count ?? 0;
-    return isSameColumn ? (count ? count : 1) : count + 1;
-  };
-
-  const positionOptions = Array(calculatePositions()).fill(1);
-  const defaultPos = !isSameColumn ? positionOptions.length : cardData.order;
 
   useEffect(() => {
+    const isSameColumn = selectedColumn === cardData.column;
+    const currentColumnCount = groupedTasks[selectedColumn].count;
+
+    const count = isSameColumn
+      ? currentColumnCount
+        ? currentColumnCount
+        : 1
+      : currentColumnCount + 1;
+
+    const defaultPos = !isSameColumn ? count : cardData.order;
     setSelectedPos(defaultPos);
-  }, [defaultPos]);
+  }, [groupedTasks, selectedColumn, cardData.column, cardData.order]);
+
+  const columnMap = Object.entries(groupedTasks).map(([column, { count }]) => ({
+    type: column,
+    count,
+  }));
+
+  const calculatePositions = () => {
+    const count = columnMap.find((d) => d.type === selectedColumn)?.count ?? 0;
+    const isSameColumn = selectedColumn === cardData.column;
+    const length = isSameColumn ? (count ? count : 1) : count + 1;
+
+    return Array.from({ length: length }, (_, i) => i + 1);
+  };
+
+  const positionOptions = calculatePositions();
 
   return (
-    <D.Root defaultOpen>
-      <D.Trigger asChild>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
         <button className="rounded-md p-1.5 hover:bg-gray-100">
           <MdCloseFullscreen size={18} className="text-gray-500" />
         </button>
-      </D.Trigger>
+      </DropdownMenu.Trigger>
 
-      <D.Content
-        className="rounded-md bg-secondary p-2"
+      <DropdownMenu.Content
+        className="min-w-48 rounded-md bg-secondary p-2"
         align="start"
         sideOffset={6}
         alignOffset={5}
@@ -65,26 +70,24 @@ function Settings({ cardData }: { cardData: Card }) {
         <h2 className="text-md mb-6 text-center font-semibold text-primary">
           Move Card
         </h2>
-
         <p className="text-[12px] font-bold text-primary">Select Destination</p>
 
         <div className="parent mt-1 flex gap-2">
-          <div className="flex flex-col rounded-md bg-gray-300 p-2">
+          <div className="group/list flex cursor-pointer flex-col rounded-md bg-gray-300 p-2 hover:bg-gray-500">
             <label
               htmlFor="List"
-              className="text-[12px] leading-4 text-primary"
+              className="w-full cursor-pointer text-[12px] leading-4 text-primary"
             >
               List
             </label>
-
             <select
               name="List"
               id="List"
-              className="bg-gray-300 text-sm leading-5 text-primary"
+              className="cursor-pointer appearance-none bg-gray-300 text-sm leading-5 text-primary group-hover/list:bg-gray-500"
               value={selectedColumn}
               onChange={(e) => setSelectedColumn(e.target.value)}
             >
-              {formattedData.map(({ type, count }) => (
+              {columnMap.map(({ type, count }) => (
                 <option value={type} key={type}>
                   {type} ({count})
                 </option>
@@ -99,20 +102,20 @@ function Settings({ cardData }: { cardData: Card }) {
             >
               Position
             </label>
-
             <select
               name="Position"
               id="Position"
-              className="bg-gray-300 text-sm leading-5 text-primary"
+              className="appearance-none bg-gray-300 text-sm leading-5 text-primary"
               value={selectedPos}
               onChange={(e) => setSelectedPos(Number(e.target.value))}
             >
-              {positionOptions.map((_, index) => {
-                const pos = index + 1;
-                const isSame = pos === cardData.order && isSameColumn;
+              {positionOptions.map((pos) => {
+                const isSameColumn = selectedColumn === cardData.column;
+                const isCurrent = pos === cardData.order && isSameColumn;
+
                 return (
                   <option value={pos} key={pos}>
-                    {pos} {isSame && "(current)"}
+                    {pos} {isCurrent && "(current)"}
                   </option>
                 );
               })}
@@ -126,8 +129,8 @@ function Settings({ cardData }: { cardData: Card }) {
         >
           Move Card
         </button>
-      </D.Content>
-    </D.Root>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   );
 }
 

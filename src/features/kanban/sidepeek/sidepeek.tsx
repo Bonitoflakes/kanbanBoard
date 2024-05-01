@@ -29,8 +29,6 @@ function SidePeek({
       id,
       title,
       description,
-      column: data!.column,
-      order: data!.order,
     };
 
     updateTask(changes);

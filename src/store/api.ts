@@ -4,6 +4,7 @@ type Column = {
   id: number;
   title: string;
   colorSpace: string;
+  order: number;
 };
 
 type Card = {
@@ -23,6 +24,7 @@ type ColumnMap = Record<
     id: number;
     title: string;
     count: number;
+    order: number;
     colorSpace: string;
     cards: Array<Card>;
   }
@@ -63,7 +65,6 @@ export const api = createApi({
           .map(({ id }) => ({ type: "Tasks" as const, id: id }));
 
         return [...tags, { type: "Tasks", id: "LIST" }];
-        return [{ type: "Tasks", id: "LIST" }];
       },
     }),
 
@@ -76,7 +77,7 @@ export const api = createApi({
       invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
-    updateColumn: builder.mutation<Column, Column>({
+    updateColumn: builder.mutation<Column, Partial<Column>>({
       query: (column) => ({
         url: `/columns/${column.id}`,
         method: "PATCH",

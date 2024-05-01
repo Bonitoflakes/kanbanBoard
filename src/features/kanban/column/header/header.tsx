@@ -5,6 +5,7 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { useUpdateColumnMutation } from "@/store/api";
 import { cn } from "@/utils/cn";
 import { Alert } from "./alert";
+import { Select } from "./select";
 
 export type ColumnHeaderProps = {
   title: string;
@@ -12,6 +13,7 @@ export type ColumnHeaderProps = {
   count: number;
   id: number;
   color: string;
+  order: number;
 };
 
 const colors = {
@@ -30,6 +32,7 @@ export const ColumnHeader = ({
   count,
   toggleAdding,
   color,
+  order,
   id,
 }: ColumnHeaderProps) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -93,13 +96,15 @@ export const ColumnHeader = ({
               align="start"
               className="min-w-[220px] rounded-lg border-[0.5px] border-gray-400 bg-primary p-1.5 shadow-2xl dark:border-[0.3px] dark:border-[#3d3d3d] dark:bg-[#262626]"
             >
-              <DropdownMenu.Item
-                autoFocus
-                className="flex cursor-pointer justify-between rounded-lg p-2 text-sm text-secondary outline-none hover:bg-secondary/15 focus-visible:bg-secondary/15"
-              >
-                Hide Column
-                <div className="text-secondary">⌘+T</div>
-              </DropdownMenu.Item>
+              <Select columnID={id} columnOrder={order}>
+                <DropdownMenu.Item
+                  autoFocus
+                  className="flex cursor-pointer justify-between rounded-lg p-2 text-sm text-secondary outline-none hover:bg-secondary/15 focus-visible:bg-secondary/15"
+                >
+                  Move Column
+                  <div className="text-secondary">⌘+T</div>
+                </DropdownMenu.Item>
+              </Select>
 
               <Alert open={isAlertOpen} onChange={alertOnChange} id={id}>
                 <DropdownMenu.Item

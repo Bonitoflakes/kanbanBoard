@@ -7,6 +7,7 @@ import { useToggle } from "@/utils/useToggle";
 
 export type ColumnProps = {
   id: number;
+  order: number;
   title: string;
   activeColumn: string;
   colorSpace: string;
@@ -19,6 +20,7 @@ function Column({
   title,
   colorSpace,
   count,
+  order,
   cards,
   activeColumn,
 }: ColumnProps) {
@@ -42,6 +44,8 @@ function Column({
         color={colorSpace}
         count={count}
         toggleAdding={toggleAdding}
+        order={order}
+
       />
 
       <div className="mt-6 flex flex-col gap-[5px]">
