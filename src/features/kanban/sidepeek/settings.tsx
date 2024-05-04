@@ -26,20 +26,20 @@ function Settings({ cardData }: { cardData: Card }) {
 
   useEffect(() => {
     const isSameColumn = selectedColumn === cardData.column;
-    const currentColumnCount = groupedTasks[selectedColumn].count;
+    const currentColumn = groupedTasks.find(
+      ({ title }) => title === selectedColumn,
+    );
 
-    const count = isSameColumn
-      ? currentColumnCount
-        ? currentColumnCount
-        : 1
-      : currentColumnCount + 1;
+    const currCount = currentColumn?.count ?? 0;
+
+    const count = isSameColumn ? (currCount ? currCount : 1) : currCount + 1;
 
     const defaultPos = !isSameColumn ? count : cardData.order;
     setSelectedPos(defaultPos);
   }, [groupedTasks, selectedColumn, cardData.column, cardData.order]);
 
-  const columnMap = Object.entries(groupedTasks).map(([column, { count }]) => ({
-    type: column,
+  const columnMap = groupedTasks.map(({ count, title }) => ({
+    type: title,
     count,
   }));
 
@@ -72,8 +72,8 @@ function Settings({ cardData }: { cardData: Card }) {
         </h2>
         <p className="text-[12px] font-bold text-primary">Select Destination</p>
 
-        <div className="parent mt-1 flex gap-2">
-          <div className="group/list flex cursor-pointer flex-col rounded-md bg-gray-300 p-2 hover:bg-gray-500">
+        <div className="mt-1 flex gap-2">
+          <div className="group/list flex cursor-pointer flex-col rounded-md bg-gray-500 p-2 hover:bg-gray-600">
             <label
               htmlFor="List"
               className="w-full cursor-pointer text-[12px] leading-4 text-primary"
@@ -83,7 +83,7 @@ function Settings({ cardData }: { cardData: Card }) {
             <select
               name="List"
               id="List"
-              className="cursor-pointer appearance-none bg-gray-300 text-sm leading-5 text-primary group-hover/list:bg-gray-500"
+              className="cursor-pointer appearance-none bg-gray-500 text-sm leading-5 text-primary group-hover/list:bg-gray-600"
               value={selectedColumn}
               onChange={(e) => setSelectedColumn(e.target.value)}
             >
@@ -95,17 +95,17 @@ function Settings({ cardData }: { cardData: Card }) {
             </select>
           </div>
 
-          <div className="flex flex-col rounded-md bg-gray-300 p-2">
+          <div className="group/list flex cursor-pointer flex-col rounded-md bg-gray-500 p-2 hover:bg-gray-600">
             <label
               htmlFor="Position"
-              className="text-[12px] leading-4 text-primary"
+              className="w-full cursor-pointer text-[12px] leading-4 text-primary"
             >
               Position
             </label>
             <select
               name="Position"
               id="Position"
-              className="appearance-none bg-gray-300 text-sm leading-5 text-primary"
+              className="cursor-pointer appearance-none bg-gray-500 text-sm leading-5 text-primary group-hover/list:bg-gray-600"
               value={selectedPos}
               onChange={(e) => setSelectedPos(Number(e.target.value))}
             >
