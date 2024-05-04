@@ -1,68 +1,107 @@
-import { useEffect, useState } from "react";
-import { MdCloseFullscreen } from "react-icons/md";
+import { ReactNode, useEffect, useState } from "react";
+import { MdMoveUp } from "react-icons/md";
 import invariant from "tiny-invariant";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useGetGroupedTasksQuery, useUpdateTaskMutation } from "@/store/api";
+import { cn } from "@/utils/cn";
 
 type Card = {
   id: number;
-  title: string;
   column: string;
-  description: string;
   order: number;
 };
 
-function Settings({ cardData }: { cardData: Card }) {
-  const [selectedColumn, setSelectedColumn] = useState<string>(cardData.column);
-  const [selectedPos, setSelectedPos] = useState<number>(cardData.order);
-  const { data: groupedTasks } = useGetGroupedTasksQuery();
-  const [updateTask] = useUpdateTaskMutation();
+type DropdownSelector = {
+  label: string;
+  value: string | number;
+  children: ReactNode;
+  //  TODO: fix types
+  onChange: (e: { target: { value: string } }) => void;
+  className?: string;
+};
 
+const DropdownSelector = ({
+  label,
+  value,
+  children,
+  onChange,
+  className,
+}: DropdownSelector) => {
+  return (
+    <div className="group/list flex cursor-pointer flex-col rounded-md bg-gray-500 p-2 hover:bg-gray-600">
+      <label
+        htmlFor={label}
+        className="w-full cursor-pointer text-[12px] leading-4 text-primary"
+      >
+        {label}
+      </label>
+
+      <select
+        name={label}
+        id={label}
+        value={value}
+        onChange={onChange}
+        className={cn(
+          "min-w-14 cursor-pointer appearance-none bg-gray-500 text-sm leading-5 text-primary group-hover/list:bg-gray-600",
+          className,
+        )}
+      >
+        {children}
+      </select>
+    </div>
+  );
+};
+
+function Settings({ column, id, order }: Card) {
+  const [selectedColumn, setSelectedColumn] = useState<string>(column);
+  const [selectedPos, setSelectedPos] = useState<number>(order);
+
+  const { data: groupedTasks } = useGetGroupedTasksQuery();
   invariant(groupedTasks);
 
+  const [updateTask] = useUpdateTaskMutation();
+
   const handleMove = () => {
-    updateTask({ id: cardData.id, column: selectedColumn, order: selectedPos });
+    updateTask({ id, column: selectedColumn, order: selectedPos });
   };
 
   useEffect(() => {
-    const isSameColumn = selectedColumn === cardData.column;
-    const currentColumn = groupedTasks.find(
-      ({ title }) => title === selectedColumn,
-    );
-
-    const currCount = currentColumn?.count ?? 0;
+    const isSameColumn = selectedColumn === column;
+    const currCount =
+      groupedTasks.find(({ title }) => title === selectedColumn)?.count ?? 0;
 
     const count = isSameColumn ? (currCount ? currCount : 1) : currCount + 1;
 
-    const defaultPos = !isSameColumn ? count : cardData.order;
+    // if column with zero cards, set it to 1
+    const defaultPos = !isSameColumn ? count : order;
     setSelectedPos(defaultPos);
-  }, [groupedTasks, selectedColumn, cardData.column, cardData.order]);
+  }, [groupedTasks, selectedColumn, column, order]);
 
   const columnMap = groupedTasks.map(({ count, title }) => ({
-    type: title,
+    title,
     count,
   }));
 
-  const calculatePositions = () => {
-    const count = columnMap.find((d) => d.type === selectedColumn)?.count ?? 0;
-    const isSameColumn = selectedColumn === cardData.column;
+  const generatePositions = () => {
+    const count = columnMap.find((d) => d.title === selectedColumn)?.count ?? 0;
+    const isSameColumn = selectedColumn === column;
     const length = isSameColumn ? (count ? count : 1) : count + 1;
 
     return Array.from({ length: length }, (_, i) => i + 1);
   };
 
-  const positionOptions = calculatePositions();
+  const positionOptions = generatePositions();
 
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button className="rounded-md p-1.5 hover:bg-gray-100">
-          <MdCloseFullscreen size={18} className="text-gray-500" />
+          <MdMoveUp size={18} className="text-gray-500" />
         </button>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content
-        className="min-w-48 rounded-md bg-secondary p-2"
+        className="min-w-48 rounded-md bg-secondary p-2.5"
         align="start"
         sideOffset={6}
         alignOffset={5}
@@ -73,58 +112,44 @@ function Settings({ cardData }: { cardData: Card }) {
         <p className="text-[12px] font-bold text-primary">Select Destination</p>
 
         <div className="mt-1 flex gap-2">
-          <div className="group/list flex cursor-pointer flex-col rounded-md bg-gray-500 p-2 hover:bg-gray-600">
-            <label
-              htmlFor="List"
-              className="w-full cursor-pointer text-[12px] leading-4 text-primary"
-            >
-              List
-            </label>
-            <select
-              name="List"
-              id="List"
-              className="cursor-pointer appearance-none bg-gray-500 text-sm leading-5 text-primary group-hover/list:bg-gray-600"
-              value={selectedColumn}
-              onChange={(e) => setSelectedColumn(e.target.value)}
-            >
-              {columnMap.map(({ type, count }) => (
-                <option value={type} key={type}>
-                  {type} ({count})
+          <DropdownSelector
+            label="Column"
+            value={selectedColumn}
+            onChange={(e: { target: { value: string } }) =>
+              setSelectedColumn(e.target.value)
+            }
+            className="min-w-32"
+          >
+            {columnMap.map(({ title, count }) => (
+              <option value={title} key={title}>
+                {title} ({count})
+              </option>
+            ))}
+          </DropdownSelector>
+
+          <DropdownSelector
+            label="Position"
+            value={selectedPos}
+            // TODO: fix types
+            onChange={(e: { target: { value: string } }) =>
+              setSelectedPos(Number(e.target.value))
+            }
+          >
+            {positionOptions.map((pos) => {
+              const isSameColumn = selectedColumn === column;
+              const isCurrent = pos === order && isSameColumn;
+
+              return (
+                <option value={pos} key={pos}>
+                  {pos} {isCurrent && "(current)"}
                 </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="group/list flex cursor-pointer flex-col rounded-md bg-gray-500 p-2 hover:bg-gray-600">
-            <label
-              htmlFor="Position"
-              className="w-full cursor-pointer text-[12px] leading-4 text-primary"
-            >
-              Position
-            </label>
-            <select
-              name="Position"
-              id="Position"
-              className="cursor-pointer appearance-none bg-gray-500 text-sm leading-5 text-primary group-hover/list:bg-gray-600"
-              value={selectedPos}
-              onChange={(e) => setSelectedPos(Number(e.target.value))}
-            >
-              {positionOptions.map((pos) => {
-                const isSameColumn = selectedColumn === cardData.column;
-                const isCurrent = pos === cardData.order && isSameColumn;
-
-                return (
-                  <option value={pos} key={pos}>
-                    {pos} {isCurrent && "(current)"}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+              );
+            })}
+          </DropdownSelector>
         </div>
 
         <button
-          className="mt-1.5 flex w-full items-center justify-center rounded-md bg-primary p-2 text-sm font-semibold text-secondary"
+          className="mt-2.5 flex w-full items-center justify-center rounded-md bg-primary p-2 text-sm font-semibold text-secondary"
           onClick={handleMove}
         >
           Move Card

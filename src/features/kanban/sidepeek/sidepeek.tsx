@@ -1,5 +1,5 @@
 import { VscEyeClosed } from "react-icons/vsc";
-import { useSidebar } from "./sidePeekContext";
+import { useSidepeek } from "./sidePeekContext";
 import { useEffect, useRef } from "react";
 import { useGetTaskQuery, useUpdateTaskMutation } from "@/store/api";
 import invariant from "tiny-invariant";
@@ -8,9 +8,9 @@ import Settings from "./settings";
 function SidePeek({
   setHasToggled,
 }: {
-  setHasToggled: React.Dispatch<React.SetStateAction<boolean>>;
+  setHasToggled: (value?: boolean | undefined) => void;
 }) {
-  const { sidebar, toggleSidebar, sidePeekData } = useSidebar();
+  const { isSidepeekOpen, toggleIsSidepeekOpen, sidePeekData } = useSidepeek();
   const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
 
@@ -37,11 +37,11 @@ function SidePeek({
   useEffect(() => {
     const handleKeyboard = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        toggleSidebar(false);
+        toggleIsSidepeekOpen(false);
       }
     };
 
-    if (sidebar) {
+    if (isSidepeekOpen) {
       setHasToggled(true);
       document.addEventListener("keydown", handleKeyboard);
     }
@@ -49,11 +49,10 @@ function SidePeek({
     return () => {
       document.removeEventListener("keydown", handleKeyboard);
     };
-  }, [setHasToggled, sidebar, toggleSidebar]);
+  }, [setHasToggled, isSidepeekOpen, toggleIsSidepeekOpen]);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {JSON.stringify(error)}</div>;
-
   if (!data) return <></>;
 
   return (
@@ -61,12 +60,12 @@ function SidePeek({
       <div className="px-1">
         <button
           className="rounded-md p-1.5 hover:bg-gray-100"
-          onClick={() => toggleSidebar(false)}
+          onClick={() => toggleIsSidepeekOpen(false)}
         >
           <VscEyeClosed size={18} className="text-gray-500" />
         </button>
 
-        <Settings cardData={data} />
+        <Settings {...data} />
       </div>
 
       <div className="p-8">

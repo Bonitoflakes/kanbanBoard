@@ -5,7 +5,7 @@ import moveCaretToEnd from "@/utils/moveCaret";
 import { useDeleteTaskMutation, useUpdateTaskMutation } from "@/store/api";
 import { cn } from "@/utils/cn";
 import { useToggle } from "@/utils/useToggle";
-import { useSidebar } from "../sidepeek/sidePeekContext";
+import { useSidepeek } from "../sidepeek/sidePeekContext";
 
 type CardProps = {
   id: number;
@@ -14,7 +14,7 @@ type CardProps = {
 };
 
 function Card({ id, title, column }: CardProps) {
-  const { toggleSidebar, setSidebarData } = useSidebar();
+  const { toggleIsSidepeekOpen, setSidePeekData } = useSidepeek();
 
   const [editing, toggleEditing] = useToggle(false);
   const contentEditableRef = useRef(null);
@@ -45,13 +45,11 @@ function Card({ id, title, column }: CardProps) {
     });
   };
 
-  const handleDelete = (id: number) => {
-    deleteTask(id);
-  };
+  const handleDelete = () => deleteTask(id);
 
   const openSidePeek = () => {
-    toggleSidebar(true);
-    setSidebarData(id);
+    toggleIsSidepeekOpen(true);
+    setSidePeekData({ id });
   };
 
   return (
@@ -69,18 +67,14 @@ function Card({ id, title, column }: CardProps) {
           contentEditable={editing}
           suppressContentEditableWarning={true}
           ref={contentEditableRef}
-          //  @ts-expect-error: Fix event types
+          //  @ts-expect-error: TODO: Fix types
           onBlur={handleSave}
         >
           {title}
         </div>
 
         {!editing && (
-          <CardOptions
-            handleEdit={handleEdit}
-            handleDelete={handleDelete}
-            id={id}
-          />
+          <CardOptions handleEdit={handleEdit} handleDelete={handleDelete} />
         )}
       </div>
     </div>
