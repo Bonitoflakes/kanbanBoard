@@ -3,8 +3,7 @@ import { useAddTaskMutation } from "@/store/api";
 import { MdAdd } from "react-icons/md";
 
 type AddCardProps = {
-  column: string;
-  adding: boolean;
+  columnType: string;
   toggleAdding: () => void;
 };
 
@@ -21,7 +20,7 @@ export const NewCardButton = ({
 }: NewCardProps) => {
   return (
     <>
-      <AddCard column={title} adding={adding} toggleAdding={toggleAdding} />
+      {adding && <AddCard columnType={title} toggleAdding={toggleAdding} />}
 
       {!adding && (
         <button
@@ -36,16 +35,16 @@ export const NewCardButton = ({
   );
 };
 
-function AddCard({ adding, toggleAdding, column }: AddCardProps) {
-  const [addCard] = useAddTaskMutation();
+function AddCard({ toggleAdding, columnType }: AddCardProps) {
   const [value, setValue] = useState("");
+  const [addCard] = useAddTaskMutation();
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     addCard({
       title: value.trim(),
-      column,
+      column: columnType,
     });
 
     setValue("");
@@ -54,16 +53,14 @@ function AddCard({ adding, toggleAdding, column }: AddCardProps) {
 
   return (
     <>
-      {adding && (
-        <textarea
-          onBlur={handleSubmit}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          autoFocus
-          placeholder="Add new task..."
-          className="mt-2.5 w-full resize-none rounded bg-accent-2 p-3 text-sm font-semibold text-secondary   placeholder-slate-400 ring-accent-1/30 focus-visible:outline-none focus-visible:outline-accent-1 focus-visible:ring-1 dark:placeholder-slate-200"
-        />
-      )}
+      <textarea
+        onBlur={handleSubmit}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        autoFocus
+        placeholder="Add new task..."
+        className="mt-2.5 w-full resize-none rounded bg-accent-2 p-3 text-sm font-semibold text-secondary   placeholder-slate-400 ring-accent-1/30 focus-visible:outline-none focus-visible:outline-accent-1 focus-visible:ring-1 dark:placeholder-slate-200"
+      />
     </>
   );
 }

@@ -3,7 +3,7 @@ import * as S from "@radix-ui/react-select";
 import { ReactNode, useState } from "react";
 import invariant from "tiny-invariant";
 
-export const Select = ({
+export const DropdownSelect = ({
   children,
   columnID,
   columnOrder,
@@ -13,16 +13,16 @@ export const Select = ({
   columnOrder: number;
 }) => {
   const [selectedPos, setSelectedPos] = useState<number>(columnOrder);
-  const { data: groupedTasks } = useGetGroupedTasksQuery();
   const [updateColumn] = useUpdateColumnMutation();
+
+  const { data: groupedTasks } = useGetGroupedTasksQuery();
+  invariant(groupedTasks);
 
   const handleMove = () => {
     updateColumn({ id: columnID, order: selectedPos });
   };
 
-  invariant(groupedTasks);
-
-  const columnMap = Object.values(groupedTasks).map(({ title, order }) => ({
+  const columnMap = groupedTasks.map(({ title, order }) => ({
     type: title,
     order,
   }));

@@ -15,20 +15,17 @@ type Card = {
   order: number;
 };
 
-type NewColumn = Omit<Column, "id">;
+type NewColumn = Omit<Column, "id" | "order">;
 type NewCard = Omit<Card, "id" | "order" | "description">;
 
-type ColumnMap = Record<
-  string,
-  {
-    id: number;
-    title: string;
-    count: number;
-    order: number;
-    colorSpace: string;
-    cards: Array<Card>;
-  }
->;
+type ColumnMap = {
+  id: number;
+  count: number;
+  title: string;
+  order: number;
+  colorSpace: string;
+  cards: Array<Card>;
+};
 
 export function providesList<
   R extends { id: string | number }[],
@@ -54,18 +51,9 @@ export const api = createApi({
   tagTypes: ["Tasks"],
 
   endpoints: (builder) => ({
-    getGroupedTasks: builder.query<ColumnMap, void>({
+    getGroupedTasks: builder.query<ColumnMap[], void>({
       query: () => "/columnmap",
-      providesTags: (result, error) => {
-        if (error) console.error(error);
-        if (!result) return [{ type: "Tasks", id: "LIST" }];
-
-        const tags = Object.entries(result)
-          .flatMap(([, { cards }]) => cards)
-          .map(({ id }) => ({ type: "Tasks" as const, id: id }));
-
-        return [...tags, { type: "Tasks", id: "LIST" }];
-      },
+      providesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
     addColumn: builder.mutation<Column, NewColumn>({
@@ -74,6 +62,20 @@ export const api = createApi({
         method: "POST",
         body: { title, colorSpace },
       }),
+      onQueryStarted({ ...patch }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          api.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
+            draft.push({
+              ...patch,
+              count: 0,
+              cards: [],
+              id: Math.random(),
+              order: 99999,
+            });
+          }),
+        );
+        queryFulfilled.catch(patchResult.undo);
+      },
       invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
@@ -83,6 +85,15 @@ export const api = createApi({
         method: "PATCH",
         body: column,
       }),
+      onQueryStarted({ ...patch }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          api.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
+            const index = draft.findIndex((c) => c.id === patch.id);
+            draft[index] = { ...draft[index], ...patch };
+          }),
+        );
+        queryFulfilled.catch(patchResult.undo);
+      },
       invalidatesTags: () => [{ type: "Tasks", id: "LIST" }],
     }),
 
@@ -91,6 +102,15 @@ export const api = createApi({
         url: `/columns/${id}`,
         method: "DELETE",
       }),
+      onQueryStarted(args, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          api.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
+            const index = draft.findIndex((c) => c.id === args);
+            draft.splice(index, 1);
+          }),
+        );
+        queryFulfilled.catch(patchResult.undo);
+      },
       invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
@@ -107,6 +127,21 @@ export const api = createApi({
         method: "POST",
         body: task,
       }),
+
+      onQueryStarted({ ...patch }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          api.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
+            const index = draft.findIndex((c) => c.title === patch.column);
+            draft[index].cards.push({
+              ...patch,
+              id: Math.random(),
+              order: draft[index].cards.length,
+              description: "",
+            });
+          }),
+        );
+        queryFulfilled.catch(patchResult.undo);
+      },
       invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
@@ -116,6 +151,18 @@ export const api = createApi({
         method: "PATCH",
         body: task,
       }),
+
+      onQueryStarted({ ...patch }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          api.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
+            const index = draft.findIndex((c) => c.title === patch.column);
+            const currCard = draft[index].cards;
+            const indexCard = currCard.findIndex((c) => c.id === patch.id);
+            currCard[indexCard] = { ...currCard[indexCard], ...patch };
+          }),
+        );
+        queryFulfilled.catch(patchResult.undo);
+      },
       invalidatesTags: (_r, _e, arg) => [{ type: "Tasks", id: arg.id }],
     }),
 
@@ -124,6 +171,22 @@ export const api = createApi({
         url: `/cards/${id}`,
         method: "DELETE",
       }),
+
+      onQueryStarted(args, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          api.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
+            const index = draft.findIndex((c) =>
+              c.cards.some((t) => t.id === args),
+            );
+            const currCard = draft[index].cards;
+            currCard.splice(
+              currCard.findIndex((c) => c.id === args),
+              1,
+            );
+          }),
+        );
+        queryFulfilled.catch(patchResult.undo);
+      },
       invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
   }),
