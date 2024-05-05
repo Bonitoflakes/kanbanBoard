@@ -16,6 +16,10 @@
   <summary>Implement drag and drop</summary>
 </details>
 
+<details>
+  <summary>Animate out when navigating panels.</summary>
+</details>
+
 ---
 
 ---
