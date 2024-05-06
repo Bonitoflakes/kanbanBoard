@@ -1,7 +1,7 @@
-import { useAddColumnMutation } from "@/store/api";
 import { useToggle } from "@/utils/useToggle";
 import { useState } from "react";
 import { MdAdd } from "react-icons/md";
+import { useAddColumnMutation } from "./column.api";
 
 export function NewColumn() {
   const [adding, toggleAdding] = useToggle();

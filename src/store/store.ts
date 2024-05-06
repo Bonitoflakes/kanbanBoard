@@ -1,17 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
-import { api } from "./api";
+import { API } from "./api";
 import { SidepeekSlice } from "./sidepeekSlice";
 
 export const store = configureStore({
   reducer: {
     sidepeek: SidepeekSlice.reducer,
-    [api.reducerPath]: api.reducer,
+    [API.reducerPath]: API.reducer,
   },
 
   devTools: true,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
+    getDefaultMiddleware().concat(API.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

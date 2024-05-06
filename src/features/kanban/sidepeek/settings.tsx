@@ -2,8 +2,9 @@ import { ReactNode, useEffect, useState } from "react";
 import { MdMoveUp } from "react-icons/md";
 import invariant from "tiny-invariant";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useGetGroupedTasksQuery, useUpdateTaskMutation } from "@/store/api";
 import { cn } from "@/utils/cn";
+import { useUpdateTaskMutation } from "../card/card.api";
+import { useGetGroupedTasksQuery } from "../column/column.api";
 
 type Card = {
   id: number;

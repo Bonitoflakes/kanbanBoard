@@ -1,7 +1,7 @@
 import { MouseEvent, useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { cn } from "@/utils/cn";
-import { useUpdateColumnMutation } from "@/store/api";
+import { useUpdateColumnMutation } from "../column.api";
 
 import * as DM from "@radix-ui/react-dropdown-menu";
 import { DropdownAlert } from "./dropdownAlert";

@@ -2,11 +2,11 @@ import { useRef } from "react";
 import invariant from "tiny-invariant";
 import { CardOptions } from "@/features/kanban/card/cardOptions";
 import moveCaretToEnd from "@/utils/moveCaret";
-import { useDeleteTaskMutation, useUpdateTaskMutation } from "@/store/api";
 import { cn } from "@/utils/cn";
 import { useToggle } from "@/utils/useToggle";
 import { useAppDispatch } from "@/store/store";
 import { setData } from "@/store/sidepeekSlice";
+import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
 
 type CardProps = {
   id: number;

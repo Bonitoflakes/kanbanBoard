@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useAddTaskMutation } from "@/store/api";
 import { MdAdd } from "react-icons/md";
+import { useAddTaskMutation } from "../card/card.api";
 
 type AddCardProps = {
   columnType: string;

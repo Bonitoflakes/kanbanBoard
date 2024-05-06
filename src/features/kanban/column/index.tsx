@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import { useToggle } from "@/utils/useToggle";
-import Card from "@/features/kanban/card/card";
+import Card from "@/features/kanban/card";
 import { NewCardButton } from "./newCard";
 import { ColumnHeader } from "./header/header";
-import { useGetGroupedTasksQuery } from "@/store/api";
 import invariant from "tiny-invariant";
+import { useGetGroupedTasksQuery } from "./column.api";
 
 export type ColumnProps = {
   type: string;

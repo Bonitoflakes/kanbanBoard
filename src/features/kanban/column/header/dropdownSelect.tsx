@@ -1,7 +1,10 @@
-import { useGetGroupedTasksQuery, useUpdateColumnMutation } from "@/store/api";
 import * as S from "@radix-ui/react-select";
 import { ReactNode, useState } from "react";
 import invariant from "tiny-invariant";
+import {
+  useUpdateColumnMutation,
+  useGetGroupedTasksQuery,
+} from "../column.api";
 
 export const DropdownSelect = ({
   children,

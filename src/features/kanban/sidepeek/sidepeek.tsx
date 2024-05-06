@@ -1,10 +1,10 @@
 import { VscEyeClosed } from "react-icons/vsc";
 import { useCallback, useEffect, useRef } from "react";
-import { useGetTaskQuery, useUpdateTaskMutation } from "@/store/api";
 import invariant from "tiny-invariant";
 import Settings from "./settings";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { resetData, selectSidepeekData } from "@/store/sidepeekSlice";
+import { useGetTaskQuery, useUpdateTaskMutation } from "../card/card.api";
 
 function SidePeek({
   setHasToggled,

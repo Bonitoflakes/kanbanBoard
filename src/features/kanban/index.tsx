@@ -1,11 +1,11 @@
 import { memo } from "react";
 import invariant from "tiny-invariant";
-import { useGetGroupedTasksQuery } from "@/store/api";
 
 import Column from "./column";
 import { NewColumn } from "./column/newColumn";
 import Header from "./header";
 import SidePeekRenderer from "./sidepeek/husk";
+import { useGetGroupedTasksQuery } from "./column/column.api";
 
 const Kanban = memo(function Kanban() {
   const { data, isLoading, isError, error } = useGetGroupedTasksQuery();

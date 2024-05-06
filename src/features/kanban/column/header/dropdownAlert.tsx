@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { useDeleteColumnMutation } from "@/store/api";
 import Alert from "@/components/alert";
+import { useDeleteColumnMutation } from "../column.api";
 
 type AlertProps = {
   children: ReactNode;
