@@ -3,7 +3,10 @@ import { useCallback, useEffect, useRef } from "react";
 import invariant from "tiny-invariant";
 import Settings from "./settings";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { resetData, selectSidepeekData } from "@/store/sidepeekSlice";
+import {
+  resetData,
+  selectSidepeekData,
+} from "@/features/kanban/sidepeek/sidepeekSlice";
 import { useGetTaskQuery, useUpdateTaskMutation } from "../card/card.api";
 
 function SidePeek({

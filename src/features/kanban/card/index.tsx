@@ -5,7 +5,7 @@ import moveCaretToEnd from "@/utils/moveCaret";
 import { cn } from "@/utils/cn";
 import { useToggle } from "@/utils/useToggle";
 import { useAppDispatch } from "@/store/store";
-import { setData } from "@/store/sidepeekSlice";
+import { setData } from "@/features/kanban/sidepeek/sidepeekSlice";
 import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
 
 type CardProps = {

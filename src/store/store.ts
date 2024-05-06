@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 import { API } from "./api";
-import { SidepeekSlice } from "./sidepeekSlice";
+import { SidepeekSlice } from "../features/kanban/sidepeek/sidepeekSlice";
 
 export const store = configureStore({
   reducer: {

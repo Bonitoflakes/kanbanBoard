@@ -1,6 +1,6 @@
 import { cn } from "@/utils/cn";
 import SidePeek from ".";
-import { selectSidepeekData } from "@/store/sidepeekSlice";
+import { selectSidepeekData } from "@/features/kanban/sidepeek/sidepeekSlice";
 import { useAppSelector } from "@/store/store";
 import { useToggle } from "@/utils/useToggle";
 
