@@ -14,6 +14,7 @@ function SidepeekHusk() {
         "fixed bottom-0 right-0 top-0 z-50 h-full w-full max-w-[900px] translate-x-full bg-primary text-secondary shadow-2xl transition-all dark:bg-slate-950",
         isOpen ? "slideinright" : hasToggled && "slideoutright",
       )}
+      aria-hidden={!isOpen}
       data-type="sidepeek"
     >
       {isOpen && <SidePeek setHasToggled={setHasToggled} />}
