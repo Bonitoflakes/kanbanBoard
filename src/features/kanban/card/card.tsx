@@ -5,7 +5,8 @@ import moveCaretToEnd from "@/utils/moveCaret";
 import { useDeleteTaskMutation, useUpdateTaskMutation } from "@/store/api";
 import { cn } from "@/utils/cn";
 import { useToggle } from "@/utils/useToggle";
-import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "@/store/store";
+import { setData } from "@/store/sidepeekSlice";
 
 type CardProps = {
   id: number;
@@ -16,10 +17,10 @@ type CardProps = {
 function Card({ id, title, column }: CardProps) {
   const [editing, toggleEditing] = useToggle(false);
   const contentEditableRef = useRef(null);
-  const navigate = useNavigate();
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
+  const dispatch = useAppDispatch();
 
   const handleEdit = (e: MouseEvent) => {
     e.preventDefault();
@@ -44,8 +45,15 @@ function Card({ id, title, column }: CardProps) {
     });
   };
 
-  const handleDelete = () => deleteTask(id);
-  const openSidePeek = () => navigate(`/sidepeek/${id}`);
+  const handleDelete = (e: MouseEvent) => {
+    e.stopPropagation();
+    deleteTask(id);
+  };
+
+  const openSidePeek = () => {
+    // TODO: Toggle sidepeek state.
+    dispatch(setData({ id }));
+  };
 
   return (
     <div

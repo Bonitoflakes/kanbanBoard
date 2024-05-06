@@ -1,19 +1,22 @@
 import { cn } from "@/utils/cn";
 import SidePeek from "./sidepeek";
-import { useParams } from "react-router-dom";
+import { selectSidepeekData } from "@/store/sidepeekSlice";
+import { useAppSelector } from "@/store/store";
+import { useToggle } from "@/utils/useToggle";
 
 function SidePeekRenderer() {
-  const { id } = useParams();
+  const { isOpen } = useAppSelector(selectSidepeekData);
+  const [hasToggled, setHasToggled] = useToggle(false);
 
   return (
     <div
       className={cn(
         "fixed bottom-0 right-0 top-0 z-50 h-full w-full max-w-[900px] translate-x-full bg-primary text-secondary shadow-2xl transition-all dark:bg-slate-950",
-        "slideinright",
+        isOpen ? "slideinright" : hasToggled && "slideoutright",
       )}
       data-type="sidepeek"
     >
-      {<SidePeek id={Number(id)} />}
+      {isOpen && <SidePeek setHasToggled={setHasToggled} />}
     </div>
   );
 }

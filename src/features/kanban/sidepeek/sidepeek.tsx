@@ -1,14 +1,21 @@
 import { VscEyeClosed } from "react-icons/vsc";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useGetTaskQuery, useUpdateTaskMutation } from "@/store/api";
 import invariant from "tiny-invariant";
 import Settings from "./settings";
-import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { resetData, selectSidepeekData } from "@/store/sidepeekSlice";
 
-function SidePeek({ id }: { id: number }) {
+function SidePeek({
+  setHasToggled,
+}: {
+  setHasToggled: (value?: boolean | undefined) => void;
+}) {
   const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
-  const navigate = useNavigate();
+
+  const { id } = useAppSelector(selectSidepeekData);
+  const dispatch = useAppDispatch();
 
   const { data, isLoading, isError, error } = useGetTaskQuery(id);
   const [updateTask] = useUpdateTaskMutation();
@@ -20,28 +27,27 @@ function SidePeek({ id }: { id: number }) {
     const title: string = titleRef.current.innerText;
     const description: string = descRef.current.innerText;
 
-    const changes = {
+    updateTask({
       id,
       title,
       description,
-    };
-
-    updateTask(changes);
+    });
   };
+
+  const handleClose = useCallback(() => {
+    setHasToggled(true);
+    dispatch(resetData());
+  }, [dispatch, setHasToggled]);
 
   useEffect(() => {
     const handleKeyboard = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        navigate("/");
-      }
+      if (event.key === "Escape") handleClose();
     };
 
     document.addEventListener("keydown", handleKeyboard);
 
-    return () => {
-      document.removeEventListener("keydown", handleKeyboard);
-    };
-  }, [navigate]);
+    return () => document.removeEventListener("keydown", handleKeyboard);
+  }, [handleClose]);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {JSON.stringify(error)}</div>;
@@ -52,7 +58,7 @@ function SidePeek({ id }: { id: number }) {
       <div className="px-1">
         <button
           className="rounded-md p-1.5 hover:bg-gray-100"
-          onClick={() => navigate("/")}
+          onClick={handleClose}
         >
           <VscEyeClosed size={18} className="text-gray-500" />
         </button>

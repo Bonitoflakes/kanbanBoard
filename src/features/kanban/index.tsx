@@ -5,7 +5,7 @@ import { useGetGroupedTasksQuery } from "@/store/api";
 import Column from "./column";
 import { NewColumn } from "./column/newColumn";
 import Header from "./header";
-import { Outlet } from "react-router-dom";
+import SidePeekRenderer from "./sidepeek/husk";
 
 const Kanban = memo(function Kanban() {
   const { data, isLoading, isError, error } = useGetGroupedTasksQuery();
@@ -27,7 +27,7 @@ const Kanban = memo(function Kanban() {
           <NewColumn />
         </div>
 
-        <Outlet />
+        <SidePeekRenderer />
       </div>
     </>
   );

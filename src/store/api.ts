@@ -152,18 +152,7 @@ export const api = createApi({
         body: task,
       }),
 
-      onQueryStarted({ ...patch }, { dispatch, queryFulfilled }) {
-        const patchResult = dispatch(
-          api.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
-            const index = draft.findIndex((c) => c.title === patch.column);
-            const currCard = draft[index].cards;
-            const indexCard = currCard.findIndex((c) => c.id === patch.id);
-            currCard[indexCard] = { ...currCard[indexCard], ...patch };
-          }),
-        );
-        queryFulfilled.catch(patchResult.undo);
-      },
-      invalidatesTags: (_r, _e, arg) => [{ type: "Tasks", id: arg.id }],
+      invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
     deleteTask: builder.mutation<void, number>({
