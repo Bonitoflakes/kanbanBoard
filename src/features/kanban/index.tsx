@@ -4,7 +4,7 @@ import invariant from "tiny-invariant";
 import Column from "./column";
 import { NewColumn } from "./column/newColumn";
 import Header from "./header";
-import SidePeekRenderer from "./sidepeek/husk";
+import SidepeekHusk from "./sidepeek/husk";
 import { useGetGroupedTasksQuery } from "./column/column.api";
 
 const Kanban = memo(function Kanban() {
@@ -27,7 +27,7 @@ const Kanban = memo(function Kanban() {
           <NewColumn />
         </div>
 
-        <SidePeekRenderer />
+        <SidepeekHusk />
       </div>
     </>
   );

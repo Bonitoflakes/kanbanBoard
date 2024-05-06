@@ -1,10 +1,10 @@
 import { cn } from "@/utils/cn";
-import SidePeek from "./sidepeek";
+import SidePeek from ".";
 import { selectSidepeekData } from "@/store/sidepeekSlice";
 import { useAppSelector } from "@/store/store";
 import { useToggle } from "@/utils/useToggle";
 
-function SidePeekRenderer() {
+function SidepeekHusk() {
   const { isOpen } = useAppSelector(selectSidepeekData);
   const [hasToggled, setHasToggled] = useToggle(false);
 
@@ -21,4 +21,4 @@ function SidePeekRenderer() {
   );
 }
 
-export default SidePeekRenderer;
+export default SidepeekHusk;

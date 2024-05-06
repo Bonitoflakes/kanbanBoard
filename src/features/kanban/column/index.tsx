@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useToggle } from "@/utils/useToggle";
 import Card from "@/features/kanban/card";
 import { NewCardButton } from "./newCard";
-import { ColumnHeader } from "./header/header";
+import { ColumnHeader } from "./header";
 import invariant from "tiny-invariant";
 import { useGetGroupedTasksQuery } from "./column.api";
 
