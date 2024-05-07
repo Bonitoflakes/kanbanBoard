@@ -1,6 +1,7 @@
-import { useToggle } from "@/utils/useToggle";
 import { useState } from "react";
 import { MdAdd } from "react-icons/md";
+
+import { useToggle } from "@/utils/useToggle";
 import { useAddColumnMutation } from "./column.api";
 
 export function NewColumn() {
@@ -25,8 +26,8 @@ export function NewColumn() {
       {!adding && (
         <button
           className="flex w-full items-center rounded-md bg-secondary/10 p-2 py-2.5 font-bold text-secondary hover:bg-secondary/30"
-          // @ts-expect-error TODO: fix types.
-          onClick={toggleAdding}
+          // onClick={toggleAdding} // TODO: fix types.
+          onClick={() => toggleAdding()}
         >
           <MdAdd /> <span className="ml-1">Add another list</span>
         </button>

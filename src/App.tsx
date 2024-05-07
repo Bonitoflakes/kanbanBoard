@@ -1,8 +1,8 @@
 import { Provider } from "react-redux";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { store } from "@/store/store";
-import Kanban from "./features/kanban";
-import { APP_ROUTES } from "./constants/routes";
+import { APP_ROUTES } from "@/constants/routes";
+import Kanban from "@/features/kanban";
 
 function App() {
   return (
