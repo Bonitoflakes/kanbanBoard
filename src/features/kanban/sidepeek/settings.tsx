@@ -59,10 +59,9 @@ function Settings({
   column,
   order,
   refetch,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-}: Card & { refetch: () => any }) {
+}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+Card & { refetch: () => any }) {
   const [selectedColumn, setSelectedColumn] = useState<string>(column);
-
   const [selectedPos, setSelectedPos] = useState<number>(order);
   const [isDropdownOpen, toggleDropdown] = useToggle(false);
 
@@ -70,6 +69,26 @@ function Settings({
   invariant(groupedTasks);
 
   const [updateTask] = useUpdateTaskMutation();
+
+  useEffect(() => {
+    setSelectedColumn(column);
+    setSelectedPos(order);
+  }, [column, order]);
+
+  useEffect(() => {
+    const currIndex = groupedTasks.findIndex(
+      ({ title }) => title === selectedColumn,
+    );
+    const currCount = currIndex !== -1 ? groupedTasks[currIndex].count : 0;
+    const isSameColumn = selectedColumn === column;
+    const defaultPos = isSameColumn ? order : currCount + 1;
+    setSelectedPos(defaultPos);
+  }, [groupedTasks, selectedColumn, column, order]);
+
+  const columnMap = groupedTasks.map(({ count, title }) => ({
+    title,
+    count,
+  }));
 
   const handleMove = () => {
     updateTask({
@@ -82,26 +101,12 @@ function Settings({
     refetch();
   };
 
-  useEffect(() => {
-    const isSameColumn = selectedColumn === column;
-    const currCount =
-      groupedTasks.find(({ title }) => title === selectedColumn)?.count ?? 0;
-
-    const count = isSameColumn ? (currCount ? currCount : 1) : currCount + 1;
-
-    const defaultPos = !isSameColumn ? count : order;
-    setSelectedPos(defaultPos);
-  }, [groupedTasks, selectedColumn, column, order]);
-
-  const columnMap = groupedTasks.map(({ count, title }) => ({
-    title,
-    count,
-  }));
-
   const generatePositions = () => {
-    const count = columnMap.find((d) => d.title === selectedColumn)?.count ?? 0;
+    const columnIndex = columnMap.findIndex((d) => d.title === selectedColumn);
+    invariant(columnIndex !== -1, "Column not found");
+    const count = columnMap[columnIndex].count;
     const isSameColumn = selectedColumn === column;
-    const length = isSameColumn ? (count ? count : 1) : count + 1;
+    const length = isSameColumn ? count : count + 1;
 
     return Array.from({ length: length }, (_, i) => i + 1);
   };
@@ -131,6 +136,7 @@ function Settings({
           <DropdownSelector
             label="Column"
             value={selectedColumn}
+            // TODO: fix types
             onChange={(e: { target: { value: string } }) =>
               setSelectedColumn(e.target.value)
             }
