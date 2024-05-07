@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { cn } from "@/utils/cn";
 import { DropdownButton } from "./dropdownButton";
+import { useToggle } from "@/utils/useToggle";
 
 export type ColumnHeaderProps = {
   id: number;
@@ -14,7 +14,7 @@ export type ColumnHeaderProps = {
 
 export const ColumnHeader = (props: ColumnHeaderProps) => {
   const { title, count, toggleAdding } = props;
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [isPopoverOpen, togglePopover] = useToggle();
 
   return (
     <div className="flex">
@@ -41,7 +41,7 @@ export const ColumnHeader = (props: ColumnHeaderProps) => {
         <DropdownButton
           {...props}
           isPopoverOpen={isPopoverOpen}
-          setIsPopoverOpen={setIsPopoverOpen}
+          togglePopover={togglePopover}
         />
 
         <button

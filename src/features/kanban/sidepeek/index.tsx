@@ -9,12 +9,14 @@ import {
   useUpdateTaskMutation,
 } from "../card/card.api";
 
-function SidePeek({ toggleSidepeek }: { toggleSidepeek: () => void }) {
+function SidePeek({
+  toggleSidepeek,
+}: Readonly<{ toggleSidepeek: () => void }>) {
   const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const selectedCard = Number(searchParams.get("selectedCard"));
+  const selectedCard = Number(searchParams.get("selectedCard")); //TODO: Hanlde edge cases --> string or NAN
 
   const { data, isLoading, isError, error } = useGetTaskQuery(selectedCard);
 
@@ -55,6 +57,7 @@ function SidePeek({ toggleSidepeek }: { toggleSidepeek: () => void }) {
     return () => document.removeEventListener("keydown", handleKeyboard);
   }, [handleClose]);
 
+  // TODO: Better strategy for these states.
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {JSON.stringify(error)}</div>;
   if (!data || isNaN(selectedCard))
@@ -67,7 +70,7 @@ function SidePeek({ toggleSidepeek }: { toggleSidepeek: () => void }) {
           <VscEyeClosed size={18} className="text-gray-500" />
         </button>
 
-        <p>You are not on a valid card. Please go back to the board.</p>
+        <p>This is not a valid card. Please go back to the board.</p>
       </div>
     );
 
@@ -91,15 +94,18 @@ function SidePeek({ toggleSidepeek }: { toggleSidepeek: () => void }) {
           suppressContentEditableWarning
           ref={titleRef}
           onBlur={handleBlur}
+          role="textbox"
         >
           {data.title}
         </h1>
+
         <p
           className="pt-6 text-base leading-none outline-none before:text-neutral-400  empty:before:content-['Type_some_description']"
           contentEditable
           suppressContentEditableWarning
           ref={descRef}
           onBlur={handleBlur}
+          role="textbox"
         >
           {data.description}
         </p>

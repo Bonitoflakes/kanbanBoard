@@ -10,12 +10,15 @@ export type ColumnProps = {
   type: string;
 };
 
-function Column({ type }: ColumnProps) {
+function Column({ type }: Readonly<ColumnProps>) {
   const [adding, toggleAdding] = useToggle();
   const columnRef = useRef(null);
 
   const { data } = useGetGroupedTasksQuery();
-  const column = data?.find((col) => col.title === type);
+  invariant(data, "No data");
+  const columnIndex = data.findIndex((col) => col.title === type);
+  invariant(columnIndex !== -1, "Column Index not found");
+  const column = data[columnIndex];
   invariant(column, "Column not found");
 
   return (

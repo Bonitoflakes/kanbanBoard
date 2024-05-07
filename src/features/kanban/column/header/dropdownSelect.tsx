@@ -1,4 +1,4 @@
-import * as S from "@radix-ui/react-select";
+import * as Select from "@radix-ui/react-select";
 import { ReactNode, useState } from "react";
 import invariant from "tiny-invariant";
 import {
@@ -36,10 +36,10 @@ export const DropdownSelect = ({
   );
 
   return (
-    <S.Root>
-      <S.Trigger asChild>{children}</S.Trigger>
+    <Select.Root>
+      <Select.Trigger asChild>{children}</Select.Trigger>
 
-      <S.Content>
+      <Select.Content>
         <div className="flex min-w-52 flex-col rounded-md bg-gray-300 p-2">
           <label
             htmlFor="Position"
@@ -71,7 +71,7 @@ export const DropdownSelect = ({
             Move Column
           </button>
         </div>
-      </S.Content>
-    </S.Root>
+      </Select.Content>
+    </Select.Root>
   );
 };

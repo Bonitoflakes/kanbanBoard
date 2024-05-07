@@ -7,7 +7,7 @@ import { useIsFirstRender } from "@/utils/useIsFirstRender";
 
 function SidepeekHusk() {
   const [isOpen, toggleSidepeek] = useToggle(false);
-  const isFirst = useIsFirstRender();
+  const isFirst = useIsFirstRender(); // TODO: This is a hacky way to prevent the sidepeek from appearing on the first render.
 
   const [searchParams] = useSearchParams();
   const selectedCard = searchParams.get("selectedCard");

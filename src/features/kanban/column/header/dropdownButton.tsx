@@ -6,6 +6,7 @@ import { useUpdateColumnMutation } from "../column.api";
 import * as DM from "@radix-ui/react-dropdown-menu";
 import { DropdownAlert } from "./dropdownAlert";
 import { DropdownSelect } from "./dropdownSelect";
+import { useToggle } from "@/utils/useToggle";
 
 type DropdownButtonProps = {
   id: number;
@@ -14,11 +15,11 @@ type DropdownButtonProps = {
   order: number;
   colorSpace: string;
   isPopoverOpen: boolean;
-  setIsPopoverOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  togglePopover: (value?: boolean | undefined) => void;
   toggleAdding: () => void;
 };
 
-const colors = {
+const colors = Object.freeze({
   red: "bg-red-400",
   yellow: "bg-yellow-400",
   blue: "bg-blue-400",
@@ -27,16 +28,16 @@ const colors = {
   green: "bg-green-400",
   brown: "bg-amber-900",
   gray: "bg-gray-400",
-};
+});
 
 export const DropdownButton = ({
   id,
   order,
   colorSpace,
   isPopoverOpen,
-  setIsPopoverOpen,
+  togglePopover,
 }: DropdownButtonProps) => {
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useToggle();
   const [activeColor, setActiveColor] = useState(colorSpace);
 
   const [updateColumn] = useUpdateColumnMutation();
@@ -46,16 +47,16 @@ export const DropdownButton = ({
     updateColumn({ id, colorSpace });
   };
 
-  const popoverOnChange = (open: boolean) => setIsPopoverOpen(open);
+  const popoverOnChange = (isOpen: boolean) => togglePopover(isOpen);
 
-  const alertOnChange = (open: boolean) => {
-    setIsAlertOpen(open);
-    setIsPopoverOpen(open);
+  const alertOnChange = (isOpen: boolean) => {
+    setIsAlertOpen(isOpen);
   };
 
   const triggerDelete = (e: MouseEvent) => {
     e.preventDefault();
-    alertOnChange(true);
+    togglePopover(true);
+    setIsAlertOpen(true);
   };
 
   return (
@@ -137,7 +138,7 @@ export const DropdownButton = ({
               <span className="mx-1 mb-1 mt-2 flex rounded-md">
                 <button
                   className=" w-full rounded-md p-1.5 text-secondary enabled:hover:bg-zinc-500 enabled:hover:text-primary disabled:cursor-not-allowed disabled:bg-slate-200 dark:bg-gray-800 dark:hover:bg-gray-950"
-                  disabled={activeColor === "gray" ? true : false}
+                  disabled={activeColor === "gray"}
                 >
                   Remove Color
                 </button>
