@@ -1,13 +1,11 @@
 import { useRef } from "react";
 import invariant from "tiny-invariant";
+import { useSearchParams } from "react-router-dom";
 import { CardOptions } from "@/features/kanban/card/cardOptions";
 import moveCaretToEnd from "@/utils/moveCaret";
 import { cn } from "@/utils/cn";
 import { useToggle } from "@/utils/useToggle";
-import { useAppDispatch } from "@/store/store";
-import { setData } from "@/features/kanban/sidepeek/sidepeekSlice";
 import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
-import { useSearchParams } from "react-router-dom";
 
 type CardProps = {
   id: number;
@@ -22,7 +20,6 @@ function Card({ id, title, column }: CardProps) {
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
-  const dispatch = useAppDispatch();
 
   const handleEdit = (e: MouseEvent) => {
     e.preventDefault();
@@ -53,8 +50,6 @@ function Card({ id, title, column }: CardProps) {
   };
 
   const openSidePeek = () => {
-    // TODO: Toggle sidepeek state.
-    dispatch(setData({ id }));
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("selectedCard", id.toString());
     setSearchParams(newSearchParams);
