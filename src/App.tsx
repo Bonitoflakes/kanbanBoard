@@ -8,7 +8,7 @@ function App() {
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Kanban />}></Route>
+          <Route path="/board" element={<Kanban />} />
         </Routes>
       </BrowserRouter>
     </Provider>

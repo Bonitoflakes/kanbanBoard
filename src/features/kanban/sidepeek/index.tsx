@@ -1,12 +1,8 @@
-import { VscEyeClosed } from "react-icons/vsc";
 import { useCallback, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
+import { VscEyeClosed } from "react-icons/vsc";
 import invariant from "tiny-invariant";
 import Settings from "./settings";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import {
-  resetData,
-  selectSidepeekData,
-} from "@/features/kanban/sidepeek/sidepeekSlice";
 import {
   CardAPI,
   useGetTaskQuery,
@@ -14,25 +10,23 @@ import {
 } from "../card/card.api";
 
 function SidePeek({
-  setHasToggled,
+  toggleIsFirst,
+  toggleSidepeek,
 }: {
-  setHasToggled: (value?: boolean | undefined) => void;
+  toggleIsFirst: (value?: boolean | undefined) => void;
+  toggleSidepeek: (value?: boolean | undefined) => void;
 }) {
   const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { id } = useAppSelector(selectSidepeekData);
-  const dispatch = useAppDispatch();
+  const selectedCard = Number(searchParams.get("selectedCard"));
+  invariant(selectedCard, "selectedCard is missing");
 
-  const { data, isLoading, isError, error } = useGetTaskQuery(id, {
-    // refetchOnMountOrArgChange: true,
-  });
+  const { data, isLoading, isError, error } = useGetTaskQuery(selectedCard);
 
-  console.log("🚀🚀🚀 ~ file: index.tsx:35 ~ data:", data);
-
-  const { refetch } = CardAPI.endpoints.getTask.useQuerySubscription(id, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { refetch } =
+    CardAPI.endpoints.getTask.useQuerySubscription(selectedCard);
 
   const [updateTask] = useUpdateTaskMutation();
 
@@ -44,16 +38,21 @@ function SidePeek({
     const description: string = descRef.current.innerText;
 
     updateTask({
-      id,
+      id: selectedCard,
       title,
       description,
     });
   };
 
   const handleClose = useCallback(() => {
-    setHasToggled(true);
-    dispatch(resetData());
-  }, [dispatch, setHasToggled]);
+    toggleIsFirst(true);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete("selectedCard");
+    setSearchParams(newSearchParams);
+
+    toggleSidepeek();
+    // dispatch(resetData());
+  }, [toggleSidepeek, toggleIsFirst, searchParams, setSearchParams]);
 
   useEffect(() => {
     const handleKeyboard = (event: KeyboardEvent) => {

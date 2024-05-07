@@ -7,6 +7,7 @@ import { useToggle } from "@/utils/useToggle";
 import { useAppDispatch } from "@/store/store";
 import { setData } from "@/features/kanban/sidepeek/sidepeekSlice";
 import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
+import { useSearchParams } from "react-router-dom";
 
 type CardProps = {
   id: number;
@@ -17,6 +18,7 @@ type CardProps = {
 function Card({ id, title, column }: CardProps) {
   const [editing, toggleEditing] = useToggle(false);
   const contentEditableRef = useRef(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
@@ -53,6 +55,9 @@ function Card({ id, title, column }: CardProps) {
   const openSidePeek = () => {
     // TODO: Toggle sidepeek state.
     dispatch(setData({ id }));
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("selectedCard", id.toString());
+    setSearchParams(newSearchParams);
   };
 
   return (

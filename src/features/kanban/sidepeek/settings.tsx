@@ -59,12 +59,9 @@ function Settings({
   column,
   order,
   refetch,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: Card & { refetch: () => any }) {
-  console.log("🚀🚀🚀 column:", column);
-
   const [selectedColumn, setSelectedColumn] = useState<string>(column);
-
-  console.log("🚀🚀🚀 ~~ selectedColumn:", selectedColumn);
 
   const [selectedPos, setSelectedPos] = useState<number>(order);
   const [isDropdownOpen, toggleDropdown] = useToggle(false);
@@ -74,21 +71,14 @@ function Settings({
 
   const [updateTask] = useUpdateTaskMutation();
 
-  const handleMove = async () => {
-    try {
-      const payload = await updateTask({
-        id,
-        column: selectedColumn,
-        order: selectedPos,
-      }).unwrap();
-
-      console.log("fulfilled", payload);
-    } catch (error) {
-      console.error("rejected", error);
-    }
+  const handleMove = () => {
+    updateTask({
+      id,
+      column: selectedColumn,
+      order: selectedPos,
+    });
 
     toggleDropdown();
-    console.log("refetching card now....");
     refetch();
   };
 
