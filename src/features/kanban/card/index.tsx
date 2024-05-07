@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import invariant from "tiny-invariant";
+import { useSearchParams } from "react-router-dom";
 import { CardOptions } from "@/features/kanban/card/cardOptions";
 import moveCaretToEnd from "@/utils/moveCaret";
-import { useDeleteTaskMutation, useUpdateTaskMutation } from "@/store/api";
 import { cn } from "@/utils/cn";
 import { useToggle } from "@/utils/useToggle";
-import { useSidebar } from "../sidepeek/sidePeekContext";
+import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
 
 type CardProps = {
   id: number;
@@ -14,10 +14,9 @@ type CardProps = {
 };
 
 function Card({ id, title, column }: CardProps) {
-  const { toggleSidebar, setSidebarData } = useSidebar();
-
   const [editing, toggleEditing] = useToggle(false);
   const contentEditableRef = useRef(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
@@ -45,13 +44,15 @@ function Card({ id, title, column }: CardProps) {
     });
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (e: MouseEvent) => {
+    e.stopPropagation();
     deleteTask(id);
   };
 
   const openSidePeek = () => {
-    toggleSidebar(true);
-    setSidebarData(id);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("selectedCard", id.toString());
+    setSearchParams(newSearchParams);
   };
 
   return (
@@ -69,18 +70,14 @@ function Card({ id, title, column }: CardProps) {
           contentEditable={editing}
           suppressContentEditableWarning={true}
           ref={contentEditableRef}
-          //  @ts-expect-error: Fix event types
+          //  @ts-expect-error: TODO: Fix types
           onBlur={handleSave}
         >
           {title}
         </div>
 
         {!editing && (
-          <CardOptions
-            handleEdit={handleEdit}
-            handleDelete={handleDelete}
-            id={id}
-          />
+          <CardOptions handleEdit={handleEdit} handleDelete={handleDelete} />
         )}
       </div>
     </div>

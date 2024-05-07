@@ -1,68 +1,128 @@
-import { useEffect, useState } from "react";
-import { MdCloseFullscreen } from "react-icons/md";
+import { ReactNode, useEffect, useState } from "react";
+import { MdMoveUp } from "react-icons/md";
 import invariant from "tiny-invariant";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useGetGroupedTasksQuery, useUpdateTaskMutation } from "@/store/api";
+import { cn } from "@/utils/cn";
+import { useUpdateTaskMutation } from "../card/card.api";
+import { useGetGroupedTasksQuery } from "../column/column.api";
+import { useToggle } from "@/utils/useToggle";
 
 type Card = {
   id: number;
-  title: string;
   column: string;
-  description: string;
   order: number;
 };
 
-function Settings({ cardData }: { cardData: Card }) {
-  const [selectedColumn, setSelectedColumn] = useState<string>(cardData.column);
-  const [selectedPos, setSelectedPos] = useState<number>(cardData.order);
-  const { data: groupedTasks } = useGetGroupedTasksQuery();
-  const [updateTask] = useUpdateTaskMutation();
+type DropdownSelector = {
+  label: string;
+  value: string | number;
+  children: ReactNode;
+  //  TODO: fix types
+  onChange: (e: { target: { value: string } }) => void;
+  className?: string;
+};
 
+const DropdownSelector = ({
+  label,
+  value,
+  children,
+  onChange,
+  className,
+}: DropdownSelector) => {
+  return (
+    <div className="group/list flex cursor-pointer flex-col rounded-md bg-gray-500 p-2 hover:bg-gray-600">
+      <label
+        htmlFor={label}
+        className="w-full cursor-pointer text-[12px] leading-4 text-primary"
+      >
+        {label}
+      </label>
+
+      <select
+        name={label}
+        id={label}
+        value={value}
+        onChange={onChange}
+        className={cn(
+          "min-w-14 cursor-pointer appearance-none bg-gray-500 text-sm leading-5 text-primary group-hover/list:bg-gray-600",
+          className,
+        )}
+      >
+        {children}
+      </select>
+    </div>
+  );
+};
+
+function Settings({
+  id,
+  column,
+  order,
+  refetch,
+}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+Card & { refetch: () => any }) {
+  const [selectedColumn, setSelectedColumn] = useState<string>(column);
+  const [selectedPos, setSelectedPos] = useState<number>(order);
+  const [isDropdownOpen, toggleDropdown] = useToggle(false);
+
+  const { data: groupedTasks } = useGetGroupedTasksQuery();
   invariant(groupedTasks);
 
-  const handleMove = () => {
-    updateTask({ id: cardData.id, column: selectedColumn, order: selectedPos });
-  };
+  const [updateTask] = useUpdateTaskMutation();
 
   useEffect(() => {
-    const isSameColumn = selectedColumn === cardData.column;
-    const currentColumnCount = groupedTasks[selectedColumn].count;
+    setSelectedColumn(column);
+    setSelectedPos(order);
+  }, [column, order]);
 
-    const count = isSameColumn
-      ? currentColumnCount
-        ? currentColumnCount
-        : 1
-      : currentColumnCount + 1;
-
-    const defaultPos = !isSameColumn ? count : cardData.order;
+  useEffect(() => {
+    const currIndex = groupedTasks.findIndex(
+      ({ title }) => title === selectedColumn,
+    );
+    const currCount = currIndex !== -1 ? groupedTasks[currIndex].count : 0;
+    const isSameColumn = selectedColumn === column;
+    const defaultPos = isSameColumn ? order : currCount + 1;
     setSelectedPos(defaultPos);
-  }, [groupedTasks, selectedColumn, cardData.column, cardData.order]);
+  }, [groupedTasks, selectedColumn, column, order]);
 
-  const columnMap = Object.entries(groupedTasks).map(([column, { count }]) => ({
-    type: column,
+  const columnMap = groupedTasks.map(({ count, title }) => ({
+    title,
     count,
   }));
 
-  const calculatePositions = () => {
-    const count = columnMap.find((d) => d.type === selectedColumn)?.count ?? 0;
-    const isSameColumn = selectedColumn === cardData.column;
-    const length = isSameColumn ? (count ? count : 1) : count + 1;
+  const handleMove = () => {
+    updateTask({
+      id,
+      column: selectedColumn,
+      order: selectedPos,
+    });
+
+    toggleDropdown();
+    refetch();
+  };
+
+  const generatePositions = () => {
+    const columnIndex = columnMap.findIndex((d) => d.title === selectedColumn);
+    invariant(columnIndex !== -1, "Column not found");
+    const count = columnMap[columnIndex].count;
+    const isSameColumn = selectedColumn === column;
+    const length = isSameColumn ? count : count + 1;
 
     return Array.from({ length: length }, (_, i) => i + 1);
   };
 
-  const positionOptions = calculatePositions();
+  const positionOptions = generatePositions();
 
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root open={isDropdownOpen} onOpenChange={toggleDropdown}>
       <DropdownMenu.Trigger asChild>
         <button className="rounded-md p-1.5 hover:bg-gray-100">
-          <MdCloseFullscreen size={18} className="text-gray-500" />
+          <MdMoveUp size={18} className="text-gray-500" />
         </button>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content
-        className="min-w-48 rounded-md bg-secondary p-2"
+        className="min-w-48 rounded-md bg-secondary p-2.5"
         align="start"
         sideOffset={6}
         alignOffset={5}
@@ -72,59 +132,46 @@ function Settings({ cardData }: { cardData: Card }) {
         </h2>
         <p className="text-[12px] font-bold text-primary">Select Destination</p>
 
-        <div className="parent mt-1 flex gap-2">
-          <div className="group/list flex cursor-pointer flex-col rounded-md bg-gray-300 p-2 hover:bg-gray-500">
-            <label
-              htmlFor="List"
-              className="w-full cursor-pointer text-[12px] leading-4 text-primary"
-            >
-              List
-            </label>
-            <select
-              name="List"
-              id="List"
-              className="cursor-pointer appearance-none bg-gray-300 text-sm leading-5 text-primary group-hover/list:bg-gray-500"
-              value={selectedColumn}
-              onChange={(e) => setSelectedColumn(e.target.value)}
-            >
-              {columnMap.map(({ type, count }) => (
-                <option value={type} key={type}>
-                  {type} ({count})
+        <div className="mt-1 flex gap-2">
+          <DropdownSelector
+            label="Column"
+            value={selectedColumn}
+            // TODO: fix types
+            onChange={(e: { target: { value: string } }) =>
+              setSelectedColumn(e.target.value)
+            }
+            className="min-w-32"
+          >
+            {columnMap.map(({ title, count }) => (
+              <option value={title} key={title}>
+                {title} ({count})
+              </option>
+            ))}
+          </DropdownSelector>
+
+          <DropdownSelector
+            label="Position"
+            value={selectedPos}
+            // TODO: fix types
+            onChange={(e: { target: { value: string } }) =>
+              setSelectedPos(Number(e.target.value))
+            }
+          >
+            {positionOptions.map((pos) => {
+              const isSameColumn = selectedColumn === column;
+              const isCurrent = pos === order && isSameColumn;
+
+              return (
+                <option value={pos} key={pos}>
+                  {pos} {isCurrent && "(current)"}
                 </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col rounded-md bg-gray-300 p-2">
-            <label
-              htmlFor="Position"
-              className="text-[12px] leading-4 text-primary"
-            >
-              Position
-            </label>
-            <select
-              name="Position"
-              id="Position"
-              className="appearance-none bg-gray-300 text-sm leading-5 text-primary"
-              value={selectedPos}
-              onChange={(e) => setSelectedPos(Number(e.target.value))}
-            >
-              {positionOptions.map((pos) => {
-                const isSameColumn = selectedColumn === cardData.column;
-                const isCurrent = pos === cardData.order && isSameColumn;
-
-                return (
-                  <option value={pos} key={pos}>
-                    {pos} {isCurrent && "(current)"}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+              );
+            })}
+          </DropdownSelector>
         </div>
 
         <button
-          className="mt-1.5 flex w-full items-center justify-center rounded-md bg-primary p-2 text-sm font-semibold text-secondary"
+          className="mt-2.5 flex w-full items-center justify-center rounded-md bg-primary p-2 text-sm font-semibold text-secondary"
           onClick={handleMove}
         >
           Move Card

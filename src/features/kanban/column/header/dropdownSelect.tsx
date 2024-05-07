@@ -1,9 +1,12 @@
-import { useGetGroupedTasksQuery, useUpdateColumnMutation } from "@/store/api";
-import * as S from "@radix-ui/react-select";
+import * as Select from "@radix-ui/react-select";
 import { ReactNode, useState } from "react";
 import invariant from "tiny-invariant";
+import {
+  useUpdateColumnMutation,
+  useGetGroupedTasksQuery,
+} from "../column.api";
 
-export const Select = ({
+export const DropdownSelect = ({
   children,
   columnID,
   columnOrder,
@@ -13,16 +16,16 @@ export const Select = ({
   columnOrder: number;
 }) => {
   const [selectedPos, setSelectedPos] = useState<number>(columnOrder);
-  const { data: groupedTasks } = useGetGroupedTasksQuery();
   const [updateColumn] = useUpdateColumnMutation();
+
+  const { data: groupedTasks } = useGetGroupedTasksQuery();
+  invariant(groupedTasks);
 
   const handleMove = () => {
     updateColumn({ id: columnID, order: selectedPos });
   };
 
-  invariant(groupedTasks);
-
-  const columnMap = Object.values(groupedTasks).map(({ title, order }) => ({
+  const columnMap = groupedTasks.map(({ title, order }) => ({
     type: title,
     order,
   }));
@@ -33,10 +36,10 @@ export const Select = ({
   );
 
   return (
-    <S.Root>
-      <S.Trigger asChild>{children}</S.Trigger>
+    <Select.Root>
+      <Select.Trigger asChild>{children}</Select.Trigger>
 
-      <S.Content>
+      <Select.Content>
         <div className="flex min-w-52 flex-col rounded-md bg-gray-300 p-2">
           <label
             htmlFor="Position"
@@ -68,7 +71,7 @@ export const Select = ({
             Move Column
           </button>
         </div>
-      </S.Content>
-    </S.Root>
+      </Select.Content>
+    </Select.Root>
   );
 };

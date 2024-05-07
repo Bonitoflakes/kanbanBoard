@@ -1,23 +1,34 @@
 import { cn } from "@/utils/cn";
-import { useSidebar } from "./sidePeekContext";
-import { useState } from "react";
-import SidePeek from "./sidepeek";
+import SidePeek from ".";
+import { useToggle } from "@/utils/useToggle";
+import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useIsFirstRender } from "@/utils/useIsFirstRender";
 
-function SidePeekRenderer() {
-  const { sidebar } = useSidebar();
-  const [hasToggled, setHasToggled] = useState(false);
+function SidepeekHusk() {
+  const [isOpen, toggleSidepeek] = useToggle(false);
+  const isFirst = useIsFirstRender(); // TODO: This is a hacky way to prevent the sidepeek from appearing on the first render.
+
+  const [searchParams] = useSearchParams();
+  const selectedCard = searchParams.get("selectedCard");
+
+  useEffect(() => {
+    if (selectedCard) toggleSidepeek(true);
+    else toggleSidepeek(false);
+  }, [selectedCard, toggleSidepeek]);
 
   return (
     <div
       className={cn(
         "fixed bottom-0 right-0 top-0 z-50 h-full w-full max-w-[900px] translate-x-full bg-primary text-secondary shadow-2xl transition-all dark:bg-slate-950",
-        sidebar ? "slideinright" : hasToggled && "slideoutright",
+        isOpen ? "slideinright" : !isFirst && "slideoutright",
       )}
-      data-type="sidebar"
+      aria-hidden={!isOpen}
+      data-type="sidepeek"
     >
-      {sidebar && <SidePeek setHasToggled={setHasToggled} />}
+      {isOpen && <SidePeek toggleSidepeek={toggleSidepeek} />}
     </div>
   );
 }
 
-export default SidePeekRenderer;
+export default SidepeekHusk;

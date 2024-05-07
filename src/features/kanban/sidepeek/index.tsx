@@ -1,72 +1,90 @@
+import { useCallback, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { VscEyeClosed } from "react-icons/vsc";
-import { useSidebar } from "./sidePeekContext";
-import { useEffect, useRef } from "react";
-import { useGetTaskQuery, useUpdateTaskMutation } from "@/store/api";
 import invariant from "tiny-invariant";
 import Settings from "./settings";
+import {
+  CardAPI,
+  useGetTaskQuery,
+  useUpdateTaskMutation,
+} from "../card/card.api";
 
 function SidePeek({
-  setHasToggled,
-}: {
-  setHasToggled: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  const { sidebar, toggleSidebar, sidePeekData } = useSidebar();
+  toggleSidepeek,
+}: Readonly<{ toggleSidepeek: () => void }>) {
   const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data, isLoading, isError, error } = useGetTaskQuery(sidePeekData.id);
+  const selectedCard = Number(searchParams.get("selectedCard")); //TODO: Hanlde edge cases --> string or NAN
+
+  const { data, isLoading, isError, error } = useGetTaskQuery(selectedCard);
+
+  const { refetch } =
+    CardAPI.endpoints.getTask.useQuerySubscription(selectedCard);
+
   const [updateTask] = useUpdateTaskMutation();
 
   const handleBlur = () => {
     invariant(titleRef.current, "title is missing");
     invariant(descRef.current, "description is missing");
 
-    const id = sidePeekData.id;
     const title: string = titleRef.current.innerText;
     const description: string = descRef.current.innerText;
 
-    const changes = {
-      id,
+    updateTask({
+      id: selectedCard,
       title,
       description,
-    };
-
-    updateTask(changes);
+    });
   };
+
+  const handleClose = useCallback(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete("selectedCard");
+    setSearchParams(newSearchParams);
+
+    toggleSidepeek();
+  }, [toggleSidepeek, searchParams, setSearchParams]);
 
   useEffect(() => {
     const handleKeyboard = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        toggleSidebar(false);
-      }
+      if (event.key === "Escape") handleClose();
     };
 
-    if (sidebar) {
-      setHasToggled(true);
-      document.addEventListener("keydown", handleKeyboard);
-    }
+    document.addEventListener("keydown", handleKeyboard);
 
-    return () => {
-      document.removeEventListener("keydown", handleKeyboard);
-    };
-  }, [setHasToggled, sidebar, toggleSidebar]);
+    return () => document.removeEventListener("keydown", handleKeyboard);
+  }, [handleClose]);
 
+  // TODO: Better strategy for these states.
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {JSON.stringify(error)}</div>;
+  if (!data || isNaN(selectedCard))
+    return (
+      <div className="p-3">
+        <button
+          className="rounded-md p-1.5 hover:bg-gray-100"
+          onClick={handleClose}
+        >
+          <VscEyeClosed size={18} className="text-gray-500" />
+        </button>
 
-  if (!data) return <></>;
+        <p>This is not a valid card. Please go back to the board.</p>
+      </div>
+    );
 
   return (
     <div className="flex flex-col p-3">
       <div className="px-1">
         <button
           className="rounded-md p-1.5 hover:bg-gray-100"
-          onClick={() => toggleSidebar(false)}
+          onClick={handleClose}
         >
           <VscEyeClosed size={18} className="text-gray-500" />
         </button>
 
-        <Settings cardData={data} />
+        <Settings {...data} refetch={refetch} />
       </div>
 
       <div className="p-8">
@@ -76,15 +94,18 @@ function SidePeek({
           suppressContentEditableWarning
           ref={titleRef}
           onBlur={handleBlur}
+          role="textbox"
         >
           {data.title}
         </h1>
+
         <p
           className="pt-6 text-base leading-none outline-none before:text-neutral-400  empty:before:content-['Type_some_description']"
           contentEditable
           suppressContentEditableWarning
           ref={descRef}
           onBlur={handleBlur}
+          role="textbox"
         >
           {data.description}
         </p>
