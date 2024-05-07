@@ -9,19 +9,12 @@ import {
   useUpdateTaskMutation,
 } from "../card/card.api";
 
-function SidePeek({
-  toggleIsFirst,
-  toggleSidepeek,
-}: {
-  toggleIsFirst: (value?: boolean | undefined) => void;
-  toggleSidepeek: (value?: boolean | undefined) => void;
-}) {
+function SidePeek({ toggleSidepeek }: { toggleSidepeek: () => void }) {
   const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const selectedCard = Number(searchParams.get("selectedCard"));
-  invariant(selectedCard, "selectedCard is missing");
 
   const { data, isLoading, isError, error } = useGetTaskQuery(selectedCard);
 
@@ -45,14 +38,12 @@ function SidePeek({
   };
 
   const handleClose = useCallback(() => {
-    toggleIsFirst(true);
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.delete("selectedCard");
     setSearchParams(newSearchParams);
 
     toggleSidepeek();
-    // dispatch(resetData());
-  }, [toggleSidepeek, toggleIsFirst, searchParams, setSearchParams]);
+  }, [toggleSidepeek, searchParams, setSearchParams]);
 
   useEffect(() => {
     const handleKeyboard = (event: KeyboardEvent) => {
@@ -66,7 +57,19 @@ function SidePeek({
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {JSON.stringify(error)}</div>;
-  if (!data) return <></>;
+  if (!data || isNaN(selectedCard))
+    return (
+      <div className="p-3">
+        <button
+          className="rounded-md p-1.5 hover:bg-gray-100"
+          onClick={handleClose}
+        >
+          <VscEyeClosed size={18} className="text-gray-500" />
+        </button>
+
+        <p>You are not on a valid card. Please go back to the board.</p>
+      </div>
+    );
 
   return (
     <div className="flex flex-col p-3">
