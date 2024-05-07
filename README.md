@@ -1,45 +1,74 @@
-# TODO:
 
-<details>
-  <summary>Figure out the solution for re-ordering Cards/Columns.</summary>
-</details>
+# Kanban Board
 
-<details>
-  <summary>Optimistic updates with RTK Query.</summary>
-  Currently, move card functionality is not working because of not implementing optimistic updates.The temporary fix is to refetch the data after the move. This is not a good solution because it will cause a lot of unnecessary network requests. 
-</details>
+A basic kanban board inspired by notion + trello.
 
-<details>
-  <summary>Sidepeek blocks overflow scroll.</summary>
-</details>
+## Features
 
-<details>
-  <summary>Implement drag and drop</summary>
-</details>
+- Light/dark mode toggle
+- Custom theme without runtime performance hit.
+- Mobile Friendly.
 
----
 
----
+## Run backend
 
----
+Clone the [project](https://github.com/Bonitoflakes/kanban-backend)
 
-<details>
-  <summary>Fix re-shuffling of cards on save</summary>
-Solution: Backend was sending data in the wrong format everytime.
-</details>
+```bash
+  git clone https://github.com/Bonitoflakes/kanban-backend.git
+```
 
-<details>
-  <summary>Fix editOptions styling</summary>
-Solution: toggle between class="dark" in html file for tailwind to pick up dark mode correctly. Done using JS Script loaded eagerly in head.
-</details>
+Go to the project directory
 
-<details>
-  <summary>Animate out when navigating panels.</summary>
-  Use a temporary shell which stays in the DOM and animates out when navigating to a different panel.
-</details>
+```bash
+  cd kanban-backend
+```
 
-# CONCEPTS LEARNED:
+Install dependencies
 
-- ### Redux with RTK Query.
-- ### Dynamic theming with CSS Variables and tailwindcss.
-- ### Drag and drop.
+```bash
+  bun install
+```
+
+Start the server
+
+```bash
+  bun dev
+```
+
+Note: The backend is very fragile, if it crashes when encountering any edge case, please restart the server manually.
+
+
+## Run frontend
+
+Clone the [project](https://github.com/Bonitoflakes/kanbanBoard)
+
+```bash
+  git clone https://github.com/Bonitoflakes/kanbanBoard.git
+```
+
+Go to the project directory
+
+```bash
+  cd kanbanBoard
+```
+
+Install dependencies
+
+```bash
+  bun install
+```
+
+Start the server
+
+```bash
+  bun dev
+```
+
+
+## Tech Stack
+
+**Client:** React, Redux, TailwindCSS
+
+**Server:** Node, Express
+
