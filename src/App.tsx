@@ -1,14 +1,16 @@
 import { Provider } from "react-redux";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { store } from "@/store/store";
 import Kanban from "./features/kanban";
+import { APP_ROUTES } from "./constants/routes";
 
 function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/board" element={<Kanban />} />
+          <Route index element={<Navigate to={APP_ROUTES.BOARD} replace />} />
+          <Route path={APP_ROUTES.BOARD} element={<Kanban />} />
         </Routes>
       </BrowserRouter>
     </Provider>
