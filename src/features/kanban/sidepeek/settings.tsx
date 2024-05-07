@@ -53,7 +53,12 @@ const DropdownSelector = ({
   );
 };
 
-function Settings({ column, id, order }: Card) {
+function Settings({
+  column,
+  id,
+  order,
+  refetch,
+}: Card & { refetch: () => any }) {
   const [selectedColumn, setSelectedColumn] = useState<string>(column);
   const [selectedPos, setSelectedPos] = useState<number>(order);
 
@@ -64,6 +69,7 @@ function Settings({ column, id, order }: Card) {
 
   const handleMove = () => {
     updateTask({ id, column: selectedColumn, order: selectedPos });
+    refetch();
   };
 
   useEffect(() => {

@@ -7,7 +7,11 @@ import {
   resetData,
   selectSidepeekData,
 } from "@/features/kanban/sidepeek/sidepeekSlice";
-import { useGetTaskQuery, useUpdateTaskMutation } from "../card/card.api";
+import {
+  CardAPI,
+  useGetTaskQuery,
+  useUpdateTaskMutation,
+} from "../card/card.api";
 
 function SidePeek({
   setHasToggled,
@@ -20,7 +24,14 @@ function SidePeek({
   const { id } = useAppSelector(selectSidepeekData);
   const dispatch = useAppDispatch();
 
-  const { data, isLoading, isError, error } = useGetTaskQuery(id);
+  const { data, isLoading, isError, error } = useGetTaskQuery(id, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  const { refetch } = CardAPI.endpoints.getTask.useQuerySubscription(id, {
+    refetchOnMountOrArgChange: true,
+  });
+
   const [updateTask] = useUpdateTaskMutation();
 
   const handleBlur = () => {
@@ -66,7 +77,7 @@ function SidePeek({
           <VscEyeClosed size={18} className="text-gray-500" />
         </button>
 
-        <Settings {...data} />
+        <Settings {...data} refetch={refetch} />
       </div>
 
       <div className="p-8">
