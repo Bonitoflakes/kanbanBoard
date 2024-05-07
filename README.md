@@ -6,6 +6,7 @@
 
 <details>
   <summary>Optimistic updates with RTK Query.</summary>
+  Currently, move card functionality is not working because of not implementing optimistic updates.The temporary fix is to refetch the data after the move. This is not a good solution because it will cause a lot of unnecessary network requests. 
 </details>
 
 <details>
@@ -14,10 +15,6 @@
 
 <details>
   <summary>Implement drag and drop</summary>
-</details>
-
-<details>
-  <summary>Animate out when navigating panels.</summary>
 </details>
 
 ---
@@ -34,6 +31,11 @@ Solution: Backend was sending data in the wrong format everytime.
 <details>
   <summary>Fix editOptions styling</summary>
 Solution: toggle between class="dark" in html file for tailwind to pick up dark mode correctly. Done using JS Script loaded eagerly in head.
+</details>
+
+<details>
+  <summary>Animate out when navigating panels.</summary>
+  Use a temporary shell which stays in the DOM and animates out when navigating to a different panel.
 </details>
 
 # CONCEPTS LEARNED:

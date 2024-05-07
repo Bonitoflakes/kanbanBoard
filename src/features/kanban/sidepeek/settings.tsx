@@ -5,6 +5,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { cn } from "@/utils/cn";
 import { useUpdateTaskMutation } from "../card/card.api";
 import { useGetGroupedTasksQuery } from "../column/column.api";
+import { useToggle } from "@/utils/useToggle";
 
 type Card = {
   id: number;
@@ -54,21 +55,40 @@ const DropdownSelector = ({
 };
 
 function Settings({
-  column,
   id,
+  column,
   order,
   refetch,
 }: Card & { refetch: () => any }) {
+  console.log("🚀🚀🚀 column:", column);
+
   const [selectedColumn, setSelectedColumn] = useState<string>(column);
+
+  console.log("🚀🚀🚀 ~~ selectedColumn:", selectedColumn);
+
   const [selectedPos, setSelectedPos] = useState<number>(order);
+  const [isDropdownOpen, toggleDropdown] = useToggle(false);
 
   const { data: groupedTasks } = useGetGroupedTasksQuery();
   invariant(groupedTasks);
 
   const [updateTask] = useUpdateTaskMutation();
 
-  const handleMove = () => {
-    updateTask({ id, column: selectedColumn, order: selectedPos });
+  const handleMove = async () => {
+    try {
+      const payload = await updateTask({
+        id,
+        column: selectedColumn,
+        order: selectedPos,
+      }).unwrap();
+
+      console.log("fulfilled", payload);
+    } catch (error) {
+      console.error("rejected", error);
+    }
+
+    toggleDropdown();
+    console.log("refetching card now....");
     refetch();
   };
 
@@ -79,7 +99,6 @@ function Settings({
 
     const count = isSameColumn ? (currCount ? currCount : 1) : currCount + 1;
 
-    // if column with zero cards, set it to 1
     const defaultPos = !isSameColumn ? count : order;
     setSelectedPos(defaultPos);
   }, [groupedTasks, selectedColumn, column, order]);
@@ -100,7 +119,7 @@ function Settings({
   const positionOptions = generatePositions();
 
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root open={isDropdownOpen} onOpenChange={toggleDropdown}>
       <DropdownMenu.Trigger asChild>
         <button className="rounded-md p-1.5 hover:bg-gray-100">
           <MdMoveUp size={18} className="text-gray-500" />

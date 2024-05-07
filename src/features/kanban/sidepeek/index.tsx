@@ -25,8 +25,10 @@ function SidePeek({
   const dispatch = useAppDispatch();
 
   const { data, isLoading, isError, error } = useGetTaskQuery(id, {
-    refetchOnMountOrArgChange: true,
+    // refetchOnMountOrArgChange: true,
   });
+
+  console.log("🚀🚀🚀 ~ file: index.tsx:35 ~ data:", data);
 
   const { refetch } = CardAPI.endpoints.getTask.useQuerySubscription(id, {
     refetchOnMountOrArgChange: true,
