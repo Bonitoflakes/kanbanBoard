@@ -16,7 +16,7 @@ export function providesList<
 export const API = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000",
+    baseUrl: process.env.API_URL || "http://localhost:10000",
     prepareHeaders: (headers) => {
       return headers;
     },
