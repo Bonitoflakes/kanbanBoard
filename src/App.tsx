@@ -1,5 +1,6 @@
 import { Provider } from "react-redux";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { store } from "@/store/store";
 import { APP_ROUTES } from "@/constants/routes";
 import Kanban from "@/features/kanban";
@@ -13,6 +14,7 @@ function App() {
           <Route path={APP_ROUTES.BOARD} element={<Kanban />} />
         </Routes>
       </BrowserRouter>
+      <SpeedInsights />
     </Provider>
   );
 }
