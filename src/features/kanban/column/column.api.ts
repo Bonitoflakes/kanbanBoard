@@ -18,16 +18,20 @@ export const ColumnAPI = API.injectEndpoints({
         const randomID = Date.now();
 
         const patchResult = dispatch(
-          ColumnAPI.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
-            draft.push({
-              id: randomID,
-              title: args.title,
-              order: draft.length + 1,
-              colorSpace: args.colorSpace,
-              count: 0,
-              cards: [],
-            });
-          }),
+          ColumnAPI.util.updateQueryData(
+            "getGroupedTasks",
+            undefined,
+            (draft) => {
+              draft.push({
+                id: randomID,
+                title: args.title,
+                order: draft.length + 1,
+                colorSpace: args.colorSpace,
+                count: 0,
+                cards: [],
+              });
+            },
+          ),
         );
 
         try {
@@ -35,12 +39,18 @@ export const ColumnAPI = API.injectEndpoints({
           console.log(serverData);
 
           dispatch(
-            ColumnAPI.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
-              const columnIndex = draft.findIndex((col) => col.id === randomID);
-              if (columnIndex === -1) return console.log("Column not found");
-              const column = draft[columnIndex];
-              draft[columnIndex] = { ...column, ...serverData };
-            }),
+            ColumnAPI.util.updateQueryData(
+              "getGroupedTasks",
+              undefined,
+              (draft) => {
+                const columnIndex = draft.findIndex(
+                  (col) => col.id === randomID,
+                );
+                if (columnIndex === -1) return console.log("Column not found");
+                const column = draft[columnIndex];
+                draft[columnIndex] = { ...column, ...serverData };
+              },
+            ),
           );
         } catch (error) {
           patchResult.undo(); // Revert the optimistic update on error
@@ -67,11 +77,15 @@ export const ColumnAPI = API.injectEndpoints({
       }),
       onQueryStarted: (id, { dispatch, queryFulfilled }) => {
         const patchResult = dispatch(
-          ColumnAPI.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
-            const columnIndex = draft.findIndex((col) => col.id === id);
-            if (columnIndex === -1) return console.log("Column not found");
-            draft.splice(columnIndex, 1);
-          }),
+          ColumnAPI.util.updateQueryData(
+            "getGroupedTasks",
+            undefined,
+            (draft) => {
+              const columnIndex = draft.findIndex((col) => col.id === id);
+              if (columnIndex === -1) return console.log("Column not found");
+              draft.splice(columnIndex, 1);
+            },
+          ),
         );
         queryFulfilled.catch(patchResult.undo);
       },

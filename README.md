@@ -1,4 +1,3 @@
-
 # Kanban Board
 
 A basic kanban board inspired by notion + trello.
@@ -8,7 +7,6 @@ A basic kanban board inspired by notion + trello.
 - Light/dark mode toggle
 - Custom theme without runtime performance hit.
 - Mobile Friendly.
-
 
 ## Run backend
 
@@ -38,7 +36,6 @@ Start the server
 
 Note: The backend is very fragile, if it crashes when encountering any edge case, please restart the server manually.
 
-
 ## Run frontend
 
 Clone the [project](https://github.com/Bonitoflakes/kanbanBoard)
@@ -65,10 +62,8 @@ Start the server
   bun dev
 ```
 
-
 ## Tech Stack
 
 **Client:** React, Redux, TailwindCSS
 
 **Server:** Node, Express
-

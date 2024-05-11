@@ -12,8 +12,14 @@ export const getColumnIndexByCardID = (draft: ColumnMap[], cardID: number) => {
   return columnIndex;
 };
 
-export const getCardIndex = (draft: ColumnMap[], colIndex: number, cardID: number) => {
-  const cardIndex = draft[colIndex].cards.findIndex((card) => card.id === cardID);
+export const getCardIndex = (
+  draft: ColumnMap[],
+  colIndex: number,
+  cardID: number,
+) => {
+  const cardIndex = draft[colIndex].cards.findIndex(
+    (card) => card.id === cardID,
+  );
   return cardIndex;
 };
 
