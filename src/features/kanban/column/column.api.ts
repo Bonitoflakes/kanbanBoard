@@ -1,31 +1,5 @@
 import { API } from "@/store/api";
-import Column from ".";
-
-type Column = {
-  id: number;
-  title: string;
-  colorSpace: string;
-  order: number;
-};
-
-type Card = {
-  id: number;
-  title: string;
-  column: string;
-  description: string;
-  order: number;
-};
-
-type NewColumn = Omit<Column, "id" | "order">;
-
-type ColumnMap = {
-  id: number;
-  count: number;
-  title: string;
-  order: number;
-  colorSpace: string;
-  cards: Array<Card>;
-};
+import { Column, ColumnMap, NewColumn } from "@/types";
 
 export const ColumnAPI = API.injectEndpoints({
   endpoints: (builder) => ({
@@ -40,7 +14,40 @@ export const ColumnAPI = API.injectEndpoints({
         method: "POST",
         body: { title, colorSpace },
       }),
-      invalidatesTags: [{ type: "Tasks", id: "LIST" }],
+      onQueryStarted: async (args, { dispatch, queryFulfilled }) => {
+        const randomID = Date.now();
+
+        const patchResult = dispatch(
+          ColumnAPI.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
+            draft.push({
+              id: randomID,
+              title: args.title,
+              order: draft.length + 1,
+              colorSpace: args.colorSpace,
+              count: 0,
+              cards: [],
+            });
+          }),
+        );
+
+        try {
+          const { data: serverData } = await queryFulfilled;
+          console.log(serverData);
+
+          dispatch(
+            ColumnAPI.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
+              const columnIndex = draft.findIndex((col) => col.id === randomID);
+              if (columnIndex === -1) return console.log("Column not found");
+              const column = draft[columnIndex];
+              draft[columnIndex] = { ...column, ...serverData };
+            }),
+          );
+        } catch (error) {
+          patchResult.undo(); // Revert the optimistic update on error
+          console.error(error);
+        }
+      },
+      // invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
     updateColumn: builder.mutation<Column, Partial<Column>>({
@@ -49,6 +56,7 @@ export const ColumnAPI = API.injectEndpoints({
         method: "PATCH",
         body: column,
       }),
+
       invalidatesTags: () => [{ type: "Tasks", id: "LIST" }],
     }),
 
@@ -57,7 +65,17 @@ export const ColumnAPI = API.injectEndpoints({
         url: `/columns/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "Tasks", id: "LIST" }],
+      onQueryStarted: (id, { dispatch, queryFulfilled }) => {
+        const patchResult = dispatch(
+          ColumnAPI.util.updateQueryData("getGroupedTasks", undefined, (draft) => {
+            const columnIndex = draft.findIndex((col) => col.id === id);
+            if (columnIndex === -1) return console.log("Column not found");
+            draft.splice(columnIndex, 1);
+          }),
+        );
+        queryFulfilled.catch(patchResult.undo);
+      },
+      // invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
   }),
 });
