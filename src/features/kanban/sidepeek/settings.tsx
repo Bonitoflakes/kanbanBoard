@@ -52,7 +52,7 @@ function Settings({ id, column, order }: Card) {
       order: selectedPos,
     });
 
-    const patchCard = dispatch(
+    dispatch(
       CardAPI.util.updateQueryData("getTask", id, (draft) => {
         draft.column = selectedColumn;
         draft.order = selectedPos;
