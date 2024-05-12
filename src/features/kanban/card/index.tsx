@@ -46,11 +46,13 @@ function Card({ id, title, column, order }: CardProps) {
   };
 
   const handleDelete = (e: MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     deleteTask(id);
   };
 
   const openSidePeek = () => {
+    if (editing) return;
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("selectedCard", id.toString());
     setSearchParams(newSearchParams);
