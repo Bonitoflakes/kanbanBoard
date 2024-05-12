@@ -1,19 +1,6 @@
 # TODO:
 
 <details>
-  <summary>Figure out the solution for re-ordering Cards/Columns.</summary>
-</details>
-
-<details>
-  <summary>Optimistic updates with RTK Query.</summary>
-  Currently, move card functionality is not working because of not implementing optimistic updates.The temporary fix is to refetch the data after the move. This is not a good solution because it will cause a lot of unnecessary network requests. 
-</details>
-
-<details>
-  <summary>Sidepeek blocks overflow scroll.</summary>
-</details>
-
-<details>
   <summary>Implement drag and drop</summary>
 </details>
 
@@ -22,6 +9,23 @@
 ---
 
 ---
+
+<details>
+  <summary>Figure out the solution for re-ordering Cards/Columns.</summary>
+  Currently, the frontend is able to make the necessary changes to the cache,
+  TODO: Added re-ordering to the backend.
+</details>
+
+<details>
+  <summary>Optimistic updates with RTK Query.</summary>
+  Currently, the frontend is able to make the necessary changes to the cache,
+  TODO: Added re-ordering to the backend.
+</details>
+
+<details>
+  <summary>Sidepeek blocks overflow scroll.</summary>
+Solution: Animate width of the column view by -900px when the sidepeek is open.
+</details>
 
 <details>
   <summary>Fix re-shuffling of cards on save</summary>
