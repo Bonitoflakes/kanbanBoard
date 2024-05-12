@@ -11,9 +11,10 @@ type CardProps = {
   id: number;
   title: string;
   column: string;
+  order: number;
 };
 
-function Card({ id, title, column }: CardProps) {
+function Card({ id, title, column, order }: CardProps) {
   const [editing, toggleEditing] = useToggle(false);
   const contentEditableRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -66,8 +67,10 @@ function Card({ id, title, column }: CardProps) {
           className={cn(
             "w-full cursor-pointer break-all rounded-md px-2 py-3 text-start text-sm font-semibold text-secondary empty:before:text-neutral-400 empty:before:content-['Untitled...'] active:cursor-grabbing dark:empty:before:text-neutral-400",
             editing && "cursor-auto",
+            import.meta.env.DEV && "customOrderDebugger",
           )}
           contentEditable={editing}
+          data-order={order}
           suppressContentEditableWarning={true}
           ref={contentEditableRef}
           //  @ts-expect-error: TODO: Fix types

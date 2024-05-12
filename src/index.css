@@ -209,3 +209,14 @@ body {
     transform: translateX(100%);
   }
 }
+
+.customOrderDebugger::before {
+  top: 0;
+  right: 0;
+  position: absolute;
+  color: rgb(61, 58, 58);
+  border-bottom: 3px dashed rgb(255, 173, 173);
+  font-size: 0.8em;
+  content: "Order:" attr(data-order);
+  pointer-events: none;
+}
