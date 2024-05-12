@@ -1,8 +1,8 @@
 import { MdDelete, MdEdit } from "react-icons/md";
 
 type CardOptionsProps = {
-  handleEdit: (e: MouseEvent) => void;
-  handleDelete: (e: MouseEvent) => void;
+  handleEdit: (e: React.MouseEvent) => void;
+  handleDelete: (e: React.MouseEvent) => void;
 };
 
 export function CardOptions({ handleEdit, handleDelete }: CardOptionsProps) {
@@ -11,7 +11,6 @@ export function CardOptions({ handleEdit, handleDelete }: CardOptionsProps) {
       <button
         title="Edit"
         className="rounded-s-lg bg-primary px-2 py-2 hover:bg-gray-400 dark:hover:bg-gray-600"
-        //  @ts-expect-error: TODO: Fix types
         onClick={handleEdit}
       >
         <MdEdit className="text-secondary" />
@@ -22,7 +21,6 @@ export function CardOptions({ handleEdit, handleDelete }: CardOptionsProps) {
       <button
         title="Delete"
         className=" rounded-e-lg bg-primary px-2 py-2 hover:bg-red-400 dark:hover:bg-red-800"
-        //  @ts-expect-error: TODO: Fix types
         onClick={handleDelete}
       >
         <MdDelete className="text-secondary " />

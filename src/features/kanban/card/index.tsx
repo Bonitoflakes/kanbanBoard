@@ -22,7 +22,7 @@ function Card({ id, title, column, order }: CardProps) {
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
 
-  const handleEdit = (e: MouseEvent) => {
+  const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -34,7 +34,7 @@ function Card({ id, title, column, order }: CardProps) {
     });
   };
 
-  const handleSave = (e: FocusEvent) => {
+  const handleSave = (e: React.FocusEvent) => {
     e.stopPropagation();
 
     toggleEditing();
@@ -45,7 +45,7 @@ function Card({ id, title, column, order }: CardProps) {
     });
   };
 
-  const handleDelete = (e: MouseEvent) => {
+  const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     deleteTask(id);
@@ -75,7 +75,6 @@ function Card({ id, title, column, order }: CardProps) {
           data-order={order}
           suppressContentEditableWarning={true}
           ref={contentEditableRef}
-          //  @ts-expect-error: TODO: Fix types
           onBlur={handleSave}
         >
           {title}
