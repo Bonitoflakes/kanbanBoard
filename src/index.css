@@ -192,6 +192,14 @@ body {
   animation: slideoutright 0.5s ease-in-out forwards;
 }
 
+.reduceWidth {
+  animation: reduceWidth 0.5s ease-in-out forwards;
+}
+
+.increaseWidth {
+  animation: increaseWidth 0.5s ease-in-out forwards;
+}
+
 @keyframes slideinright {
   from {
     transform: translateX(100%);
@@ -208,4 +216,37 @@ body {
   to {
     transform: translateX(100%);
   }
+}
+
+@keyframes reduceWidth {
+  from {
+    width: 100%;
+  }
+  to {
+    width: calc(100% - 900px);
+  }
+}
+
+@keyframes increaseWidth {
+  from {
+    width: calc(100% - 900px);
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.customOrderDebugger::before {
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  color: rgb(61, 58, 58);
+  border-bottom: 3px dashed rgb(255, 173, 173);
+  font-size: 0.8em;
+  content: "Order:" attr(data-order);
+  pointer-events: none;
+}
+
+.customOrderDebugger {
+  position: relative;
 }

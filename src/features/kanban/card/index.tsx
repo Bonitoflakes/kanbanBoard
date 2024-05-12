@@ -11,9 +11,10 @@ type CardProps = {
   id: number;
   title: string;
   column: string;
+  order: number;
 };
 
-function Card({ id, title, column }: CardProps) {
+function Card({ id, title, column, order }: CardProps) {
   const [editing, toggleEditing] = useToggle(false);
   const contentEditableRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,7 +22,7 @@ function Card({ id, title, column }: CardProps) {
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
 
-  const handleEdit = (e: MouseEvent) => {
+  const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -33,7 +34,7 @@ function Card({ id, title, column }: CardProps) {
     });
   };
 
-  const handleSave = (e: FocusEvent) => {
+  const handleSave = (e: React.FocusEvent) => {
     e.stopPropagation();
 
     toggleEditing();
@@ -44,12 +45,14 @@ function Card({ id, title, column }: CardProps) {
     });
   };
 
-  const handleDelete = (e: MouseEvent) => {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     deleteTask(id);
   };
 
   const openSidePeek = () => {
+    if (editing) return;
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("selectedCard", id.toString());
     setSearchParams(newSearchParams);
@@ -66,11 +69,12 @@ function Card({ id, title, column }: CardProps) {
           className={cn(
             "w-full cursor-pointer break-all rounded-md px-2 py-3 text-start text-sm font-semibold text-secondary empty:before:text-neutral-400 empty:before:content-['Untitled...'] active:cursor-grabbing dark:empty:before:text-neutral-400",
             editing && "cursor-auto",
+            import.meta.env.DEV && "customOrderDebugger",
           )}
           contentEditable={editing}
+          data-order={order}
           suppressContentEditableWarning={true}
           ref={contentEditableRef}
-          //  @ts-expect-error: TODO: Fix types
           onBlur={handleSave}
         >
           {title}

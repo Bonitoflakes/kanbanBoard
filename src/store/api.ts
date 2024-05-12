@@ -1,7 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-console.log(import.meta.env.VITE_API_URL);
-
 export function providesList<
   R extends { id: string | number }[],
   T extends string,
@@ -17,6 +15,8 @@ export function providesList<
 // NOTE: Return TYPE, QueryParam TYPE
 export const API = createApi({
   reducerPath: "api",
+  refetchOnReconnect: true,
+  keepUnusedDataFor: 1200,
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:10000",
     prepareHeaders: (headers) => {
