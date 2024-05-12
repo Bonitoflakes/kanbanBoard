@@ -3,11 +3,10 @@ import SidePeek from ".";
 import { useToggle } from "@/utils/useToggle";
 import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
-import { useIsFirstRender } from "@/utils/useIsFirstRender";
 
 function SidepeekHusk() {
-  const [isOpen, toggleSidepeek] = useToggle(false);
-  const isFirst = useIsFirstRender(); // TODO: This is a hacky way to prevent the sidepeek from appearing on the first render.
+  const [isOpen, toggleSidepeek] = useToggle();
+  const [touched, toggleTouched] = useToggle();
 
   const [searchParams] = useSearchParams();
   const selectedCard = searchParams.get("selectedCard");
@@ -19,14 +18,23 @@ function SidepeekHusk() {
 
   return (
     <div
+      id="sidepeek-husk"
       className={cn(
         "fixed bottom-0 right-0 top-0 z-50 h-full w-full max-w-[900px] translate-x-full bg-primary text-secondary shadow-2xl transition-all dark:bg-slate-950",
-        isOpen ? "slideinright" : !isFirst && "slideoutright",
+        {
+          slideinright: isOpen,
+          slideoutright: !isOpen && touched,
+        },
       )}
       aria-hidden={!isOpen}
       data-type="sidepeek"
     >
-      {isOpen && <SidePeek toggleSidepeek={toggleSidepeek} />}
+      {isOpen && (
+        <SidePeek
+          toggleSidepeek={toggleSidepeek}
+          toggleTouched={toggleTouched}
+        />
+      )}
     </div>
   );
 }

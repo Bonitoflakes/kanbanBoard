@@ -7,7 +7,8 @@ import { useGetTaskQuery, useUpdateTaskMutation } from "../card/card.api";
 
 function SidePeek({
   toggleSidepeek,
-}: Readonly<{ toggleSidepeek: () => void }>) {
+  toggleTouched,
+}: Readonly<{ toggleTouched: () => void; toggleSidepeek: () => void }>) {
   const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,7 +39,8 @@ function SidePeek({
     setSearchParams(newSearchParams);
 
     toggleSidepeek();
-  }, [toggleSidepeek, searchParams, setSearchParams]);
+    toggleTouched();
+  }, [toggleSidepeek, searchParams, setSearchParams, toggleTouched]);
 
   useEffect(() => {
     const handleKeyboard = (event: KeyboardEvent) => {
