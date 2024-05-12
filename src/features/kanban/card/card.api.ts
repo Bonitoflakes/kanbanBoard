@@ -1,7 +1,80 @@
 import { API } from "@/store/api";
 import { ColumnAPI } from "@/features/kanban/column/column.api";
 import { getColumnAndCardIndex, getColumnIndexByTitle } from "./utils";
-import { Card, NewCard, UpdateCard } from "@/types";
+import { Card, ColumnMap, NewCard, UpdateCard } from "@/types";
+import invariant from "tiny-invariant";
+
+export const reorderCards = (
+  cards: Card[],
+  sourceIndex: number,
+  destinationIndex: number,
+) => {
+  // Remove the card from the source index
+  const [removedCard] = cards.splice(sourceIndex, 1);
+
+  // Insert the removed card at the destination index
+  cards.splice(destinationIndex, 0, removedCard);
+
+  // Update the order field for each card
+  cards.forEach((card, index) => {
+    card.order = index + 1;
+  });
+
+  // Sort the cards by order
+  cards.sort((a, b) => a.order - b.order);
+
+  return cards;
+};
+
+export const handleMoveCardToNewColumn = (
+  draft: ColumnMap[],
+  oldColumnIndex: number,
+  cardIndex: number,
+  args: UpdateCard,
+) => {
+  console.log("Move card to different column");
+  invariant(args.column !== undefined, "column is undefined");
+  invariant(args.order !== undefined, "order is undefined");
+
+  const newColumnIndex = getColumnIndexByTitle(draft, args.column);
+  if (newColumnIndex === -1) return console.error("Column not found");
+
+  const oldColumn = draft[oldColumnIndex];
+  const newColumn = draft[newColumnIndex];
+
+  const [removedCard] = oldColumn.cards.splice(cardIndex, 1);
+  removedCard.column = args.column;
+
+  oldColumn.count--;
+  oldColumn.cards.forEach((card, index) => (card.order = index + 1));
+
+  newColumn.cards.push(removedCard);
+  newColumn.count++;
+
+  const reorderedCards = reorderCards(
+    newColumn.cards,
+    newColumn.cards.length - 1,
+    args.order - 1,
+  );
+  newColumn.cards = reorderedCards;
+};
+
+export const handleMoveCardInSameColumn = (
+  draft: ColumnMap[],
+  columnIndex: number,
+  cardIndex: number,
+  args: UpdateCard,
+) => {
+  console.log("Update card within the same column");
+  invariant(args.order !== undefined, "order is undefined");
+
+  const reorderedData = reorderCards(
+    draft[columnIndex].cards,
+    cardIndex,
+    args.order - 1,
+  );
+  draft[columnIndex].cards = reorderedData;
+};
 
 export const CardAPI = API.injectEndpoints({
   endpoints: (builder) => ({
@@ -81,7 +154,6 @@ export const CardAPI = API.injectEndpoints({
             "getGroupedTasks",
             undefined,
             (draft) => {
-              //
               const { columnIndex, cardIndex } = getColumnAndCardIndex(
                 draft,
                 args.id,
@@ -91,8 +163,20 @@ export const CardAPI = API.injectEndpoints({
                 return;
               }
 
+              if (args.order === undefined) {
+                console.log("Update card details only, not order");
+                draft[columnIndex].cards[cardIndex] = {
+                  ...draft[columnIndex].cards[cardIndex],
+                  ...args,
+                };
+                return;
+              }
+
               // Case: Move card to a different column.
-              if (args.column) {
+              if (
+                args.column !== draft[columnIndex].title &&
+                args.column !== undefined
+              ) {
                 console.log("Move card to different column");
                 const newColumnIndex = getColumnIndexByTitle(
                   draft,
@@ -106,20 +190,43 @@ export const CardAPI = API.injectEndpoints({
                 const oldColumn = draft[columnIndex];
                 const newColumn = draft[newColumnIndex];
 
-                const cardToBeMoved = oldColumn.cards.splice(cardIndex, 1);
+                const [removedCard] = oldColumn.cards.splice(cardIndex, 1);
+                console.log(JSON.stringify(removedCard), "removedCard");
+                console.log(args.column, "column");
                 oldColumn.count--;
+                oldColumn.cards.forEach((card, index) => {
+                  card.order = index + 1;
+                });
 
-                newColumn.cards.push(cardToBeMoved[0]);
+                removedCard.column = args.column;
+                newColumn.cards.push(removedCard);
+
+                const reorderedCards = reorderCards(
+                  newColumn.cards,
+                  newColumn.cards.length - 1,
+                  args.order - 1,
+                );
+                newColumn.cards = reorderedCards;
+                newColumn.cards.forEach((card, index) => {
+                  card.order = index + 1;
+                });
                 newColumn.count++;
-                return;
               }
 
               // Case: Update card within the same column.
-              console.log("Update card within the same column");
-              draft[columnIndex].cards[cardIndex] = {
-                ...draft[columnIndex].cards[cardIndex],
-                ...args,
-              };
+              else {
+                console.log("Update card within the same column");
+                const newPos = args.order;
+                invariant(newPos !== undefined, "order is undefined");
+
+                const reorderedData = reorderCards(
+                  draft[columnIndex].cards,
+                  cardIndex,
+                  newPos - 1,
+                );
+
+                draft[columnIndex].cards = reorderedData;
+              }
             },
           ),
         );
