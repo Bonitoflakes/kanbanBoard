@@ -211,7 +211,7 @@ body {
 }
 
 .customOrderDebugger::before {
-  top: 0;
+  bottom: 0;
   right: 0;
   position: absolute;
   color: rgb(61, 58, 58);
@@ -219,4 +219,8 @@ body {
   font-size: 0.8em;
   content: "Order:" attr(data-order);
   pointer-events: none;
+}
+
+.customOrderDebugger {
+  position: relative;
 }

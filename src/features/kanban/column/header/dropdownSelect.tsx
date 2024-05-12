@@ -10,10 +10,12 @@ export const DropdownSelect = ({
   children,
   columnID,
   columnOrder,
+  togglePopover,
 }: {
   children: ReactNode;
   columnID: number;
   columnOrder: number;
+  togglePopover: (value?: boolean | undefined) => void;
 }) => {
   const [selectedPos, setSelectedPos] = useState<number>(columnOrder);
   const [updateColumn] = useUpdateColumnMutation();
@@ -23,6 +25,7 @@ export const DropdownSelect = ({
 
   const handleMove = () => {
     updateColumn({ id: columnID, order: selectedPos });
+    togglePopover(false);
   };
 
   const columnMap = groupedTasks.map(({ title, order }) => ({

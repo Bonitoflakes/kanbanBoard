@@ -15,6 +15,7 @@ export type ColumnHeaderProps = {
 export const ColumnHeader = (props: ColumnHeaderProps) => {
   const { title, count, toggleAdding } = props;
   const [isPopoverOpen, togglePopover] = useToggle();
+  
 
   return (
     <div className="flex">
@@ -37,7 +38,13 @@ export const ColumnHeader = (props: ColumnHeaderProps) => {
       <div className="flex-1"></div>
 
       {/* The buttons */}
-      <div className="flex place-items-center">
+      <div
+        className={cn(
+          "flex place-items-center",
+          import.meta.env.DEV && "customOrderDebugger",
+        )}
+        data-order={props.order}
+      >
         <DropdownButton
           {...props}
           isPopoverOpen={isPopoverOpen}
