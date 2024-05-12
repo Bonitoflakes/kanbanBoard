@@ -26,7 +26,6 @@ export function NewColumn() {
       {!adding && (
         <button
           className="flex w-full items-center rounded-md bg-secondary/10 p-2 py-2.5 font-bold text-secondary hover:bg-secondary/30"
-          // onClick={toggleAdding} // TODO: fix types.
           onClick={() => toggleAdding()}
         >
           <MdAdd /> <span className="ml-1">Add another list</span>

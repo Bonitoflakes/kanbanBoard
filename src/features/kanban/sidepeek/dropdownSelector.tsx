@@ -5,8 +5,7 @@ type DropdownSelector = {
   label: string;
   value: string | number;
   children: ReactNode;
-  //  TODO: fix types
-  onChange: (e: { target: { value: string } }) => void;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   className?: string;
 };
 

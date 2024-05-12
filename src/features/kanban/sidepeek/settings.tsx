@@ -97,8 +97,7 @@ function Settings({ id, column, order }: Card) {
           <DropdownSelector
             label="Column"
             value={selectedColumn}
-            // TODO: fix types
-            onChange={(e: { target: { value: string } }) =>
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               setSelectedColumn(e.target.value)
             }
             className="min-w-32"
@@ -113,8 +112,7 @@ function Settings({ id, column, order }: Card) {
           <DropdownSelector
             label="Position"
             value={selectedPos}
-            // TODO: fix types
-            onChange={(e: { target: { value: string } }) =>
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               setSelectedPos(Number(e.target.value))
             }
           >
