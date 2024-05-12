@@ -3,11 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { VscEyeClosed } from "react-icons/vsc";
 import invariant from "tiny-invariant";
 import Settings from "./settings";
-import {
-  CardAPI,
-  useGetTaskQuery,
-  useUpdateTaskMutation,
-} from "../card/card.api";
+import { useGetTaskQuery, useUpdateTaskMutation } from "../card/card.api";
 
 function SidePeek({
   toggleSidepeek,
@@ -19,9 +15,6 @@ function SidePeek({
   const selectedCard = Number(searchParams.get("selectedCard")); //TODO: Hanlde edge cases --> string or NAN
 
   const { data, isLoading, isError, error } = useGetTaskQuery(selectedCard);
-
-  const { refetch } =
-    CardAPI.endpoints.getTask.useQuerySubscription(selectedCard);
 
   const [updateTask] = useUpdateTaskMutation();
 
@@ -84,7 +77,7 @@ function SidePeek({
           <VscEyeClosed size={18} className="text-gray-500" />
         </button>
 
-        <Settings {...data} refetch={refetch} />
+        <Settings {...data} />
       </div>
 
       <div className="p-8">
