@@ -158,10 +158,8 @@ export const CardAPI = API.injectEndpoints({
                 draft,
                 args.id,
               );
-              if (columnIndex === -1 || cardIndex === -1) {
-                console.error("Column or card not found");
-                return;
-              }
+              if (columnIndex === -1 || cardIndex === -1)
+                return console.error("Column or card not found");
 
               if (args.order === undefined) {
                 console.log("Update card details only, not order");
@@ -173,59 +171,13 @@ export const CardAPI = API.injectEndpoints({
               }
 
               // Case: Move card to a different column.
-              if (
-                args.column !== draft[columnIndex].title &&
-                args.column !== undefined
-              ) {
-                console.log("Move card to different column");
-                const newColumnIndex = getColumnIndexByTitle(
-                  draft,
-                  args.column,
-                );
-                if (newColumnIndex === -1) {
-                  console.error("Column not found");
-                  return;
-                }
-
-                const oldColumn = draft[columnIndex];
-                const newColumn = draft[newColumnIndex];
-
-                const [removedCard] = oldColumn.cards.splice(cardIndex, 1);
-                console.log(JSON.stringify(removedCard), "removedCard");
-                console.log(args.column, "column");
-                oldColumn.count--;
-                oldColumn.cards.forEach((card, index) => {
-                  card.order = index + 1;
-                });
-
-                removedCard.column = args.column;
-                newColumn.cards.push(removedCard);
-
-                const reorderedCards = reorderCards(
-                  newColumn.cards,
-                  newColumn.cards.length - 1,
-                  args.order - 1,
-                );
-                newColumn.cards = reorderedCards;
-                newColumn.cards.forEach((card, index) => {
-                  card.order = index + 1;
-                });
-                newColumn.count++;
+              if (args.column !== draft[columnIndex].title) {
+                handleMoveCardToNewColumn(draft, columnIndex, cardIndex, args);
               }
 
               // Case: Update card within the same column.
               else {
-                console.log("Update card within the same column");
-                const newPos = args.order;
-                invariant(newPos !== undefined, "order is undefined");
-
-                const reorderedData = reorderCards(
-                  draft[columnIndex].cards,
-                  cardIndex,
-                  newPos - 1,
-                );
-
-                draft[columnIndex].cards = reorderedData;
+                handleMoveCardInSameColumn(draft, columnIndex, cardIndex, args);
               }
             },
           ),
