@@ -1,0 +1,252 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root[data-theme="dark"] {
+    --primary: 0deg 0% 10%;
+    --secondary: 0deg 0% 100%;
+
+    --redLight: 1deg 57% 54%;
+    --redMedium: 8deg 32% 24%;
+    --redDark: 9deg 11% 13%;
+
+    --purpleLight: 269deg 45% 56%;
+    --purpleMedium: 272deg 20% 19%;
+    --purpleDark: 269.4deg 8.1% 13.8%;
+
+    --blueLight: 211.3deg 63.9% 50%;
+    --blueMedium: 200deg 36% 16%;
+    --blueDark: 214deg 11% 13%;
+
+    --greenLight: 150.6deg 54.5% 38.8%;
+    --greenMedium: 148.8deg 44.8% 32%;
+    --greenDark: 140deg 9% 13%;
+
+    --yellowLight: 39.4deg 76.4% 44.9%;
+    --yellowMedium: 31deg 29% 20%;
+    --yellowDark: 33deg 15% 12%;
+
+    --orangeLight: 28deg 74.2% 48.6%;
+    --orangeMedium: 28deg 73% 38%;
+    --orangeDark: 20.1deg 14% 13.8%;
+
+    --brownLight: 17.6deg 30.6% 52%;
+    --brownMedium: 18.8deg 34% 38.6%;
+    --brownDark: 17.3deg 11.1% 13.5%;
+
+    --grayLight: 0deg 0% 61%;
+    --grayMedium: 0deg 0% 18%;
+    --grayDark: 0deg 0% 13%;
+  }
+
+  :root[data-theme="light"] {
+    --primary: 0deg 0% 100%;
+    --secondary: 0deg 0% 10%;
+
+    --redLight: 5deg 67% 64%;
+    --redMedium: 9deg 100% 93%;
+    --redDark: 9deg 78% 98%;
+
+    /* hsl(9, 78%, 98%)
+    hsl(9, 100%, 93%)
+    hsl(5, 67%, 64%) */
+
+    --yellowLight: 38deg 60% 50%;
+    --yellowMedium: 41deg 93% 89%;
+    --yellowDark: 45deg 50% 97%;
+
+    /* hsl(45, 50%, 97%)
+    hsl(41, 93%, 89%)
+    hsl(38, 60%, 50%) */
+
+    --blueLight: 204deg 42% 55%;
+    --blueMedium: 203deg 47% 88%;
+    --blueDark: 189deg 54% 98%;
+
+    /* hsl(189, 54%, 98%)
+    hsl(203, 47%, 88%)
+    hsl(204, 42%, 55%) */
+
+    --purpleLight: 274deg 35% 64%;
+    --purpleMedium: 278deg 32% 90%;
+    --purpleDark: 270deg 50% 98%;
+
+    /* hsl(270, 50%, 98%)
+    hsl(278, 32%, 90%)
+    hsl(274, 35%, 64%) */
+
+    --greenLight: 141deg 20% 52%;
+    --greenMedium: 120.8deg 32% 89%;
+    --greenDark: 105.6deg 33% 98%;
+
+    /* hsl(105, 33%, 98%)
+    hsl(120, 32%, 89%)
+    hsl(141, 20%, 52%) */
+
+    --orangeLight: 27deg 66% 54%;
+    --orangeMedium: 26deg 83% 89%;
+    --orangeDark: 17deg 64% 98%;
+
+    /* hsl(17, 64%, 98%)
+    hsl(26, 83%, 89%)
+    hsl(27, 66%, 54%) */
+
+    --brownLight: 17.3deg 37% 58%;
+    --brownMedium: 17.8deg 40% 89%;
+    --brownDark: 20deg 27% 98%;
+
+    /* hsl(20, 27%, 98%)
+    hsl(17, 40%, 89%)
+    hsl(17, 37%, 58%) */
+
+    --grayLight: 60deg 1% 56%;
+    --grayMedium: 40deg 5% 89%;
+    --grayDark: 60deg 8% 98%;
+
+    /* hsl(60, 1%, 56%) 
+     hsl(40, 5%, 89%) 
+     hsl(60, 8%, 98%) */
+  }
+
+  [data-theme="red"] {
+    --accent-1: var(--redLight);
+    --accent-2: var(--redMedium);
+    --accent-3: var(--redDark);
+  }
+
+  [data-theme="yellow"] {
+    --accent-1: var(--yellowLight);
+    --accent-2: var(--yellowMedium);
+    --accent-3: var(--yellowDark);
+  }
+
+  [data-theme="blue"] {
+    --accent-1: var(--blueLight);
+    --accent-2: var(--blueMedium);
+    --accent-3: var(--blueDark);
+  }
+
+  [data-theme="green"] {
+    --accent-1: var(--greenLight);
+    --accent-2: var(--greenMedium);
+    --accent-3: var(--greenDark);
+  }
+
+  [data-theme="orange"] {
+    --accent-1: var(--orangeLight);
+    --accent-2: var(--orangeMedium);
+    --accent-3: var(--orangeDark);
+  }
+
+  [data-theme="brown"] {
+    --accent-1: var(--brownLight);
+    --accent-2: var(--brownMedium);
+    --accent-3: var(--brownDark);
+  }
+
+  [data-theme="purple"] {
+    --accent-1: var(--purpleLight);
+    --accent-2: var(--purpleMedium);
+    --accent-3: var(--purpleDark);
+  }
+
+  [data-theme="gray"] {
+    --accent-1: var(--grayLight);
+    --accent-2: var(--grayMedium);
+    --accent-3: var(--grayDark);
+  }
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  @apply transition-colors duration-150;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+  width: 100%;
+}
+
+#root {
+  width: 100%;
+}
+
+.slideinright {
+  animation: slideinright 0.5s ease-in-out forwards;
+}
+
+.slideoutright {
+  animation: slideoutright 0.5s ease-in-out forwards;
+}
+
+.reduceWidth {
+  animation: reduceWidth 0.5s ease-in-out forwards;
+}
+
+.increaseWidth {
+  animation: increaseWidth 0.5s ease-in-out forwards;
+}
+
+@keyframes slideinright {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slideoutright {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes reduceWidth {
+  from {
+    width: 100%;
+  }
+  to {
+    width: calc(100% - 900px);
+  }
+}
+
+@keyframes increaseWidth {
+  from {
+    width: calc(100% - 900px);
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.customOrderDebugger::before {
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  color: rgb(61, 58, 58);
+  border-bottom: 3px dashed rgb(255, 173, 173);
+  font-size: 0.8em;
+  content: "Order:" attr(data-order);
+  pointer-events: none;
+}
+
+.customOrderDebugger {
+  position: relative;
+}
