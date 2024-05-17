@@ -1,11 +1,19 @@
-import { useRef } from "react";
-import invariant from "tiny-invariant";
+import { useRef, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { once } from "@atlaskit/pragmatic-drag-and-drop/once";
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import invariant from "tiny-invariant";
+
+import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
+
 import { CardOptions } from "@/features/kanban/card/cardOptions";
 import moveCaretToEnd from "@/utils/moveCaret";
 import { cn } from "@/utils/cn";
 import { useToggle } from "@/utils/useToggle";
-import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
 
 type CardProps = {
   id: number;
@@ -15,12 +23,41 @@ type CardProps = {
 };
 
 function Card({ id, title, column, order }: CardProps) {
-  const [editing, toggleEditing] = useToggle(false);
+  const [editing, toggleEditing] = useToggle();
   const contentEditableRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
+
+  const cardData = useMemo(
+    () => ({
+      type: "card",
+      id,
+      title,
+      order,
+      column,
+    }),
+    [id, order, title, column],
+  );
+
+  useEffect(() => {
+    const el = cardRef.current;
+    invariant(el);
+
+    return combine(
+      draggable({
+        element: el,
+        getInitialData: () => cardData,
+      }),
+
+      dropTargetForElements({
+        element: el,
+        getData: once(() => cardData),
+      }),
+    );
+  }, [cardData]);
 
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -60,9 +97,10 @@ function Card({ id, title, column, order }: CardProps) {
 
   return (
     <div
-      className="group/card relative"
+      className="group/card relative rounded-md"
       onClick={openSidePeek}
       data-type="card"
+      ref={cardRef}
     >
       <div className="rounded-md bg-accent-2 transition-colors hover:bg-accent-1/35">
         <div
