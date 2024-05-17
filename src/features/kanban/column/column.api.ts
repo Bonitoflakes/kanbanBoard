@@ -36,7 +36,6 @@ export const ColumnAPI = API.injectEndpoints({
 
         try {
           const { data: serverData } = await queryFulfilled;
-          console.log(serverData);
 
           dispatch(
             ColumnAPI.util.updateQueryData(
