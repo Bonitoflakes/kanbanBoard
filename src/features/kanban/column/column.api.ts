@@ -118,6 +118,7 @@ export const ColumnAPI = API.injectEndpoints({
               const columnIndex = draft.findIndex((col) => col.id === id);
               if (columnIndex === -1) return console.log("Column not found");
               draft.splice(columnIndex, 1);
+              draft.forEach((col, index) => (col.order = index + 1));
             },
           ),
         );

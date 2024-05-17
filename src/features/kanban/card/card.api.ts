@@ -209,6 +209,9 @@ export const CardAPI = API.injectEndpoints({
 
               draft[columnIndex].cards.splice(cardIndex, 1);
               draft[columnIndex].count--;
+              draft[columnIndex].cards.forEach((card, index) => {
+                card.order = index + 1;
+              });
             },
           ),
         );
