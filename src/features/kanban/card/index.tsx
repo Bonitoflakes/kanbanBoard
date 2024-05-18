@@ -1,11 +1,16 @@
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { once } from "@atlaskit/pragmatic-drag-and-drop/once";
 import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  Edge,
+  attachClosestEdge,
+  extractClosestEdge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import invariant from "tiny-invariant";
 
 import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
@@ -27,6 +32,7 @@ function Card({ id, title, column, order }: CardProps) {
   const contentEditableRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const cardRef = useRef<HTMLDivElement>(null);
+  const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
@@ -54,10 +60,56 @@ function Card({ id, title, column, order }: CardProps) {
 
       dropTargetForElements({
         element: el,
-        getData: once(() => cardData),
+        getData: (args) => {
+          const result = attachClosestEdge(cardData, {
+            element: el,
+            input: args.input,
+            allowedEdges: ["top", "bottom"],
+          });
+
+          return result;
+        },
+        onDrag({ self, source }) {
+          if (source.data.type === "column") {
+            setClosestEdge(null);
+            return;
+          }
+
+          const isSource = source.element === el;
+          if (isSource) {
+            setClosestEdge(null);
+            return;
+          }
+
+          const closestEdge = extractClosestEdge(self.data);
+          const sourceOrder = source.data.order as number;
+
+          const isItemBeforeSource = order === sourceOrder - 1;
+          const isItemAfterSource = order === sourceOrder + 1;
+
+          // Don't show the drop indicator if the item is before the source
+          // or after the source (i.e. the edge is near the source)
+
+          const isDropIndicatorHidden =
+            (isItemBeforeSource && closestEdge === "bottom") ||
+            (isItemAfterSource && closestEdge === "top");
+
+          if (isDropIndicatorHidden) {
+            setClosestEdge(null);
+            return;
+          }
+
+          setClosestEdge(closestEdge);
+        },
+        onDragLeave() {
+          setClosestEdge(null);
+        },
+        onDrop() {
+          setClosestEdge(null);
+        },
       }),
     );
-  }, [cardData]);
+  }, [cardData, order]);
 
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -122,6 +174,7 @@ function Card({ id, title, column, order }: CardProps) {
           <CardOptions handleEdit={handleEdit} handleDelete={handleDelete} />
         )}
       </div>
+      {closestEdge && <DropIndicator edge={closestEdge} gap="4px" />}
     </div>
   );
 }

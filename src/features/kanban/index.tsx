@@ -5,6 +5,7 @@ import {
   BaseEventPayload,
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/types";
+import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import invariant from "tiny-invariant";
 
 import { useToggle } from "@/utils/useToggle";
@@ -39,27 +40,72 @@ function Kanban() {
   const handleDrop = useCallback(
     (args: BaseEventPayload<ElementDragType>) => {
       updateActiveColumn(null);
-      invariant(data, "No data");
+      invariant(data, "No data from query");
 
       const origin = args.source.data;
       const target = args.location.current.dropTargets[0].data;
 
+      if (origin.id === target.id) return; // early return if same card / column.
+
+      const closestEdge = extractClosestEdge(target);
+
       if (origin.type === "column" && target.type === "column") {
-        updateColumn({
-          id: origin.id as number,
-          order: target.order as number,
-        });
-        return;
+        const targetOrder = target.order as number;
+
+        if (closestEdge === "left" && origin.order === targetOrder - 1) {
+          return console.log("noop");
+        }
+
+        if (closestEdge === "right" && origin.order === targetOrder + 1) {
+          return console.log("noop");
+        }
+
+        if (closestEdge === "right") {
+          updateColumn({
+            id: origin.id as number,
+            order: targetOrder + 1,
+          });
+          return;
+        }
+
+        if (closestEdge === "left") {
+          updateColumn({
+            id: origin.id as number,
+            order: targetOrder,
+          });
+          return;
+        }
       }
 
       if (origin.type === "card" && target.type === "card") {
-        updateTask({
-          id: origin.id as number,
-          order: target.order as number,
-          column: target.column as string,
-        });
+        const targetOrder = target.order as number;
+        const targetColumn = target.column as string;
 
-        return;
+        if (closestEdge === "top" && origin.order === targetOrder - 1) {
+          return console.log("noop");
+        }
+
+        if (closestEdge === "bottom" && origin.order === targetOrder + 1) {
+          return console.log("noop");
+        }
+
+        if (closestEdge === "bottom") {
+          updateTask({
+            id: origin.id as number,
+            order: targetOrder + 1,
+            column: targetColumn,
+          });
+          return;
+        }
+
+        if (closestEdge === "top") {
+          updateTask({
+            id: origin.id as number,
+            order: targetOrder,
+            column: targetColumn,
+          });
+          return;
+        }
       }
 
       if (origin.type === "card" && target.type === "column") {
@@ -68,13 +114,15 @@ function Kanban() {
         );
 
         invariant(destColIndex !== -1, "Column not found");
-        const destColCardsLength = data[destColIndex].cards.length + 1;
+        const destColCardsLength = data[destColIndex].cards.length;
 
-        updateTask({
-          id: origin.id as number,
-          column: target.title as string,
-          order: destColCardsLength,
-        });
+        if (destColCardsLength === 0) {
+          updateTask({
+            id: origin.id as number,
+            column: target.title as string,
+            order: 1,
+          });
+        }
       }
     },
     [data, updateColumn, updateTask],
@@ -103,7 +151,7 @@ function Kanban() {
   invariant(data);
 
   return (
-    <div className="flex h-full flex-col gap-4 bg-primary">
+    <div className="flex h-full flex-col gap-4 bg-primary ">
       <Header />
 
       <div
@@ -120,6 +168,7 @@ function Kanban() {
             <Column
               key={value.id}
               title={value.title}
+              order={value.order}
               activeColumn={activeColumn}
               updateActiveColumn={updateActiveColumn}
             />

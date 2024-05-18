@@ -1,11 +1,16 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useToggle } from "@/utils/useToggle";
 import {
   dropTargetForElements,
   draggable,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { once } from "@atlaskit/pragmatic-drag-and-drop/once";
+import {
+  Edge,
+  attachClosestEdge,
+  extractClosestEdge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import invariant from "tiny-invariant";
 
 import { useGetGroupedTasksQuery } from "./column.api";
@@ -17,12 +22,20 @@ import { ColumnHeader } from "./header";
 
 type ColumnProps = {
   title: string;
+  order: number;
   activeColumn: string | null;
   updateActiveColumn: (column: string) => void;
 };
 
-function Column({ title, activeColumn, updateActiveColumn }: ColumnProps) {
+function Column({
+  title,
+  order,
+  activeColumn,
+  updateActiveColumn,
+}: ColumnProps) {
   const [adding, toggleAdding] = useToggle();
+  const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+
   const columnRef = useRef<HTMLDivElement>(null);
 
   const { data } = useGetGroupedTasksQuery();
@@ -54,7 +67,55 @@ function Column({ title, activeColumn, updateActiveColumn }: ColumnProps) {
 
       dropTargetForElements({
         element,
-        getData: once(() => columnData),
+        getData: (args) => {
+          const result = attachClosestEdge(columnData, {
+            element: args.element,
+            input: args.input,
+            allowedEdges: ["left", "right"],
+          });
+          return result;
+        },
+        onDrag: ({ self, source }) => {
+          // To prevent DropIndicator from showing up for the same column.
+          const isSource = source.element === element;
+          if (isSource) {
+            setClosestEdge(null);
+            return;
+          }
+
+          // To prevent DropIndicator from showing up for the column when dragging a card
+          // from a column to another column.
+          if (source.data.type === "card") {
+            setClosestEdge(null);
+            return;
+          }
+
+          const closestEdge = extractClosestEdge(self.data);
+          const targetOrder = source.data.order as number;
+
+          const isItemBeforeSource = order === targetOrder - 1;
+          const isItemAfterSource = order === targetOrder + 1;
+
+          // Don't show the drop indicator if the item is before the source
+          // or after the source (i.e. the edge is near the source)
+          // the left edge of the itemBefore and the right edge of the itemAfter are identical postions as the item's edge
+          const isDropIndicatorHidden =
+            (isItemBeforeSource && closestEdge === "right") ||
+            (isItemAfterSource && closestEdge === "left");
+
+          if (isDropIndicatorHidden) {
+            setClosestEdge(null);
+            return;
+          }
+
+          setClosestEdge(closestEdge);
+        },
+        onDragLeave() {
+          setClosestEdge(null);
+        },
+        onDrop() {
+          setClosestEdge(null);
+        },
 
         onDragStart: ({ self, source }) => {
           const column = self.data.title as string;
@@ -69,32 +130,35 @@ function Column({ title, activeColumn, updateActiveColumn }: ColumnProps) {
         },
       }),
     );
-  }, [updateActiveColumn, columnData]);
+  }, [updateActiveColumn, columnData, order]);
 
   return (
-    <div
-      data-theme={column.colorSpace}
-      className={cn(
-        "group/column h-fit min-w-[280px] max-w-[475px] flex-1 rounded-md bg-accent-3 p-2",
-        {
-          "bg-cyan-200": activeColumn === title,
-        },
-      )}
-      ref={columnRef}
-    >
-      <ColumnHeader {...column} toggleAdding={toggleAdding} />
+    <div className="relative ">
+      <div
+        data-theme={column.colorSpace}
+        className={cn(
+          "group/column max-h-dvh w-[280px] flex-1 overflow-y-scroll rounded-md bg-accent-3 p-2 ",
+          {
+            "bg-cyan-200": activeColumn === title,
+          },
+        )}
+        ref={columnRef}
+      >
+        <ColumnHeader {...column} toggleAdding={toggleAdding} />
 
-      <div className="mt-6 flex flex-col gap-[5px]">
-        {column.cards.map((card) => (
-          <Card key={card.id} {...card} />
-        ))}
+        <div className="mt-6 flex flex-col gap-[4px]">
+          {column.cards.map((card) => (
+            <Card key={card.id} {...card} />
+          ))}
+        </div>
+
+        <NewCardButton
+          title={column.title} // alt for column id.
+          adding={adding}
+          toggleAdding={toggleAdding}
+        />
+        {closestEdge && <DropIndicator edge={closestEdge} gap="1px" />}
       </div>
-
-      <NewCardButton
-        title={column.title} // alt for column id.
-        adding={adding}
-        toggleAdding={toggleAdding}
-      />
     </div>
   );
 }
