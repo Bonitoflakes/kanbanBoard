@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  BaseEventPayload,
+  ElementDragType,
+} from "@atlaskit/pragmatic-drag-and-drop/types";
 import invariant from "tiny-invariant";
 
 import { useToggle } from "@/utils/useToggle";
@@ -10,8 +14,7 @@ import {
   useGetGroupedTasksQuery,
   useUpdateColumnMutation,
 } from "./column/column.api";
-import { useAppDispatch } from "@/store/store";
-import { CardAPI, useUpdateTaskMutation } from "./card/card.api";
+import { useUpdateTaskMutation } from "./card/card.api";
 
 import Header from "./header";
 import Column from "./column";
@@ -22,7 +25,6 @@ function Kanban() {
   const { data, isLoading, isError, error } = useGetGroupedTasksQuery();
   const [updateColumn] = useUpdateColumnMutation();
   const [updateTask] = useUpdateTaskMutation();
-  const dispatch = useAppDispatch();
 
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
 
@@ -31,6 +33,52 @@ function Kanban() {
 
   const [searchParams] = useSearchParams();
   const selectedCard = searchParams.get("selectedCard");
+
+  const updateActiveColumn = (column: string | null) => setActiveColumn(column);
+
+  const handleDrop = useCallback(
+    (args: BaseEventPayload<ElementDragType>) => {
+      updateActiveColumn(null);
+      invariant(data, "No data");
+
+      const origin = args.source.data;
+      const target = args.location.current.dropTargets[0].data;
+
+      if (origin.type === "column" && target.type === "column") {
+        updateColumn({
+          id: origin.id as number,
+          order: target.order as number,
+        });
+        return;
+      }
+
+      if (origin.type === "card" && target.type === "card") {
+        updateTask({
+          id: origin.id as number,
+          order: target.order as number,
+          column: target.column as string,
+        });
+
+        return;
+      }
+
+      if (origin.type === "card" && target.type === "column") {
+        const destColIndex = data.findIndex(
+          (lane) => lane.title === (target.title as string),
+        );
+
+        invariant(destColIndex !== -1, "Column not found");
+        const destColCardsLength = data[destColIndex].cards.length + 1;
+
+        updateTask({
+          id: origin.id as number,
+          column: target.title as string,
+          order: destColCardsLength,
+        });
+      }
+    },
+    [data, updateColumn, updateTask],
+  );
 
   useEffect(() => {
     if (selectedCard) {
@@ -45,71 +93,9 @@ function Kanban() {
         return source.data.type === "column" || source.data.type === "card";
       },
 
-      onDrop: (args) => {
-        const origin = args.source.data;
-        const destination = args.location.current.dropTargets[0].data;
-
-        console.log(args);
-        console.group("____________________________");
-        console.log("ORIGIN:", origin);
-        console.log("DESTINATION:", destination);
-        console.groupEnd();
-
-        if (origin.type === "column" && destination.type === "column") {
-          console.log("🚀🚀🚀 ~ COLUMN --- COLUMN");
-          updateColumn({
-            id: origin.id as number,
-            order: destination.order as number,
-          });
-          updateActiveColumn("");
-          return;
-        }
-
-        if (origin.type === "card" && destination.type === "card") {
-          console.log("🚀🚀🚀 ~ CARD --- CARD");
-          updateTask({
-            id: origin.id as number,
-            order: destination.order as number,
-            column: destination.column as string,
-          });
-          dispatch(
-            CardAPI.util.updateQueryData(
-              "getTask",
-              origin.id as number,
-              (draft) => {
-                draft.column = destination.column as string;
-                draft.order = destination.order as number;
-              },
-            ),
-          );
-          updateActiveColumn("");
-          return;
-        }
-
-        if (origin.type === "card" && destination.type === "column") {
-          console.log("🚀🚀🚀 ~ CARD --- COLUMN");
-
-          invariant(data, "No data");
-          const destinationColumnIndex = data.findIndex(
-            (lane) => lane.title === (destination.title as string),
-          );
-
-          invariant(destinationColumnIndex !== -1, "Column not found");
-          const destinationColumnCardsLength =
-            data[destinationColumnIndex].cards.length + 1;
-
-          updateTask({
-            id: origin.id as number,
-            column: destination.title as string,
-            order: destinationColumnCardsLength,
-          });
-          updateActiveColumn("");
-        }
-      },
+      onDrop: (args) => handleDrop(args),
     });
-  }, [updateColumn, updateTask, dispatch, data]);
-
-  const updateActiveColumn = (column: string) => setActiveColumn(column);
+  }, [handleDrop]);
 
   // TODO: Better strategy for these states.
   if (isLoading) return <div>Loading...</div>;

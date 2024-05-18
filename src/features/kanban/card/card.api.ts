@@ -148,8 +148,8 @@ export const CardAPI = API.injectEndpoints({
         method: "PATCH",
         body: task,
       }),
-      onQueryStarted: (args, { dispatch, queryFulfilled }) => {
-        const patchResult = dispatch(
+      onQueryStarted: async (args, { dispatch, queryFulfilled }) => {
+        const patchGroupedTasksResult = dispatch(
           ColumnAPI.util.updateQueryData(
             "getGroupedTasks",
             undefined,
@@ -183,7 +183,20 @@ export const CardAPI = API.injectEndpoints({
           ),
         );
 
-        queryFulfilled.catch(patchResult.undo);
+        const patchGetTaskResult = dispatch(
+          CardAPI.util.updateQueryData("getTask", args.id, (draft) =>
+            Object.assign(draft, args),
+          ),
+        );
+
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          console.error(error);
+
+          patchGroupedTasksResult.undo();
+          patchGetTaskResult.undo();
+        }
       },
     }),
 
