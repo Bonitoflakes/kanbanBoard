@@ -67,6 +67,11 @@ function Column({
 
       dropTargetForElements({
         element,
+        canDrop: ({ source }) => {
+          if (source.data.type === "column" || source.data.type === "card")
+            return true;
+          return false;
+        },
         getData: (args) => {
           const result = attachClosestEdge(columnData, {
             element: args.element,
@@ -133,11 +138,11 @@ function Column({
   }, [updateActiveColumn, columnData, order]);
 
   return (
-    <div className="relative ">
+    <div className="relative">
       <div
         data-theme={column.colorSpace}
         className={cn(
-          "group/column max-h-dvh w-[280px] flex-1 overflow-y-scroll rounded-md bg-accent-3 p-2 ",
+          "group/column w-[280px]  overflow-y-scroll rounded-md bg-accent-3 p-2",
           {
             "bg-cyan-200": activeColumn === title,
           },

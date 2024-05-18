@@ -60,6 +60,10 @@ function Card({ id, title, column, order }: CardProps) {
 
       dropTargetForElements({
         element: el,
+        canDrop: ({ source }) => {
+          if (source.data.type === "card") return true;
+          return false;
+        },
         getData: (args) => {
           const result = attachClosestEdge(cardData, {
             element: el,
@@ -94,7 +98,9 @@ function Card({ id, title, column, order }: CardProps) {
             (isItemBeforeSource && closestEdge === "bottom") ||
             (isItemAfterSource && closestEdge === "top");
 
-          if (isDropIndicatorHidden) {
+          const isSameLane = source.data.column === column;
+
+          if (isDropIndicatorHidden && isSameLane) {
             setClosestEdge(null);
             return;
           }
