@@ -139,19 +139,21 @@ function Column({
 
   return (
     <div className="relative">
+      {/* The above div is required for the drop indicator to work. */}
       <div
         data-theme={column.colorSpace}
         className={cn(
-          "group/column w-[280px]  overflow-y-scroll rounded-md bg-accent-3 p-2",
+          "group/column w-[280px]  overflow-y-scroll rounded-md bg-accent-3",
           {
             "bg-cyan-200": activeColumn === title,
           },
+          "magicThree",
         )}
         ref={columnRef}
       >
         <ColumnHeader {...column} toggleAdding={toggleAdding} />
 
-        <div className="mt-6 flex flex-col gap-[4px]">
+        <div className=" flex flex-col gap-[4px] p-2 pb-0">
           {column.cards.map((card) => (
             <Card key={card.id} {...card} />
           ))}

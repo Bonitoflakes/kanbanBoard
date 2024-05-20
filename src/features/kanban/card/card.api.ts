@@ -32,7 +32,7 @@ export const handleMoveCardToNewColumn = (
   cardIndex: number,
   args: UpdateCard,
 ) => {
-  console.log("Move card to different column");
+  // console.log("Move card to different column");
   invariant(args.column !== undefined, "column is undefined");
   invariant(args.order !== undefined, "order is undefined");
 
@@ -65,7 +65,7 @@ export const handleMoveCardInSameColumn = (
   cardIndex: number,
   args: UpdateCard,
 ) => {
-  console.log("Update card within the same column");
+  // console.log("Update card within the same column");
   invariant(args.order !== undefined, "order is undefined");
 
   const reorderedData = reorderCards(
@@ -162,7 +162,7 @@ export const CardAPI = API.injectEndpoints({
                 return console.error("Column or card not found");
 
               if (args.order === undefined) {
-                console.log("Update card details only, not order");
+                // console.log("Update card details only, not order");
                 draft[columnIndex].cards[cardIndex] = {
                   ...draft[columnIndex].cards[cardIndex],
                   ...args,

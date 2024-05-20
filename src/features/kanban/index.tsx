@@ -21,6 +21,12 @@ import Header from "./header";
 import Column from "./column";
 import { NewColumn } from "./column/newColumn";
 import SidepeekHusk from "./sidepeek/husk";
+import {
+  adjacentColumns,
+  adjacentCards,
+  calculateCardOrder,
+  calculateColumnOrder,
+} from "./util";
 
 function Kanban() {
   const { data, isLoading, isError, error } = useGetGroupedTasksQuery();
@@ -38,74 +44,61 @@ function Kanban() {
   const updateActiveColumn = (column: string | null) => setActiveColumn(column);
 
   const handleDrop = useCallback(
-    (args: BaseEventPayload<ElementDragType>) => {
-      updateActiveColumn(null);
+    function (args: BaseEventPayload<ElementDragType>) {
       invariant(data, "No data from query");
+      const allDropTargets = args.location.current.dropTargets;
+      // Early exit if dropped on anything that is not a dropzone.
+      if (allDropTargets.length === 0) return console.log("no dropzone");
 
       const origin = args.source.data;
-      const target = args.location.current.dropTargets[0].data;
+      const target = allDropTargets[0].data;
+      const originOrder = origin.order as number;
+      const targetOrder = target.order as number;
+      const isSameColumn = origin.column === target.column;
+      const closestEdge = extractClosestEdge(target);
+      invariant(closestEdge, "No closest edge");
 
       if (origin.id === target.id) return; // early return if same card / column.
 
-      const closestEdge = extractClosestEdge(target);
-
       if (origin.type === "column" && target.type === "column") {
-        const targetOrder = target.order as number;
-
-        if (closestEdge === "left" && origin.order === targetOrder - 1) {
+        if (adjacentColumns(closestEdge, originOrder, targetOrder)) {
           return console.log("noop");
         }
 
-        if (closestEdge === "right" && origin.order === targetOrder + 1) {
-          return console.log("noop");
-        }
+        const newOrder = calculateColumnOrder({
+          closestEdge,
+          originOrder: originOrder as number,
+          targetOrder,
+        });
 
-        if (closestEdge === "right") {
-          updateColumn({
-            id: origin.id as number,
-            order: targetOrder + 1,
-          });
-          return;
-        }
+        updateColumn({
+          id: origin.id as number,
+          order: newOrder,
+        });
 
-        if (closestEdge === "left") {
-          updateColumn({
-            id: origin.id as number,
-            order: targetOrder,
-          });
-          return;
-        }
+        return;
       }
 
       if (origin.type === "card" && target.type === "card") {
-        const targetOrder = target.order as number;
-        const targetColumn = target.column as string;
-
-        if (closestEdge === "top" && origin.order === targetOrder - 1) {
+        if (
+          adjacentCards(closestEdge, originOrder, targetOrder, isSameColumn)
+        ) {
           return console.log("noop");
         }
 
-        if (closestEdge === "bottom" && origin.order === targetOrder + 1) {
-          return console.log("noop");
-        }
+        const newOrder = calculateCardOrder({
+          closestEdge,
+          originOrder: originOrder as number,
+          targetOrder,
+          isSameColumn,
+        });
 
-        if (closestEdge === "bottom") {
-          updateTask({
-            id: origin.id as number,
-            order: targetOrder + 1,
-            column: targetColumn,
-          });
-          return;
-        }
-
-        if (closestEdge === "top") {
-          updateTask({
-            id: origin.id as number,
-            order: targetOrder,
-            column: targetColumn,
-          });
-          return;
-        }
+        updateTask({
+          id: origin.id as number,
+          order: newOrder,
+          column: target.column as string,
+        });
+        return;
       }
 
       if (origin.type === "card" && target.type === "column") {
@@ -115,6 +108,7 @@ function Kanban() {
 
         invariant(destColIndex !== -1, "Column not found");
         const destColCardsLength = data[destColIndex].cards.length;
+        console.log("destColCardsLength", destColCardsLength);
 
         if (destColCardsLength === 0) {
           updateTask({
@@ -141,7 +135,10 @@ function Kanban() {
         return source.data.type === "column" || source.data.type === "card";
       },
 
-      onDrop: (args) => handleDrop(args),
+      onDrop: (args) => {
+        updateActiveColumn(null);
+        handleDrop(args);
+      },
     });
   }, [handleDrop]);
 
@@ -151,7 +148,7 @@ function Kanban() {
   invariant(data);
 
   return (
-    <div className="flex h-full flex-col gap-4 bg-primary ">
+    <div className="flex h-full flex-col gap-4 bg-primary">
       <Header />
 
       <div
@@ -161,21 +158,24 @@ function Kanban() {
             reduceWidth: isOpen,
             increaseWidth: !isOpen && touched,
           },
+          "magicOne",
         )}
       >
-        {data.map((value) => {
-          return (
-            <Column
-              key={value.id}
-              title={value.title}
-              order={value.order}
-              activeColumn={activeColumn}
-              updateActiveColumn={updateActiveColumn}
-            />
-          );
-        })}
+        <div className="magicTwo">
+          {data.map((value) => {
+            return (
+              <Column
+                key={value.id}
+                title={value.title}
+                order={value.order}
+                activeColumn={activeColumn}
+                updateActiveColumn={updateActiveColumn}
+              />
+            );
+          })}
 
-        <NewColumn />
+          <NewColumn />
+        </div>
       </div>
 
       <SidepeekHusk />
