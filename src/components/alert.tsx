@@ -1,6 +1,16 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { ReactNode } from "react";
 
+type AlertProps = {
+  title?: string;
+  description?: string;
+  action?: string;
+  children: ReactNode;
+  open: boolean;
+  onChange: (e: boolean) => void;
+  handleClick: () => unknown;
+};
+
 const Alert = ({
   children,
   title = "Are you absolutely sure?",
@@ -9,15 +19,7 @@ const Alert = ({
   open,
   onChange,
   handleClick,
-}: {
-  title?: string;
-  description?: string;
-  action?: string;
-  children: ReactNode;
-  open: boolean;
-  onChange: (e: boolean) => void;
-  handleClick: () => unknown;
-}) => {
+}: AlertProps) => {
   return (
     <AlertDialog.Root open={open} onOpenChange={onChange}>
       <AlertDialog.Trigger asChild>{children}</AlertDialog.Trigger>

@@ -6,17 +6,19 @@ import {
   useGetGroupedTasksQuery,
 } from "../column.api";
 
+type DropdownSelectProps = {
+  children: ReactNode;
+  columnID: number;
+  columnOrder: number;
+  togglePopover: (value?: boolean | undefined) => void;
+};
+
 export const DropdownSelect = ({
   children,
   columnID,
   columnOrder,
   togglePopover,
-}: {
-  children: ReactNode;
-  columnID: number;
-  columnOrder: number;
-  togglePopover: (value?: boolean | undefined) => void;
-}) => {
+}: DropdownSelectProps) => {
   const [selectedPos, setSelectedPos] = useState<number>(columnOrder);
   const [updateColumn] = useUpdateColumnMutation();
 
@@ -43,7 +45,7 @@ export const DropdownSelect = ({
       <Select.Trigger asChild>{children}</Select.Trigger>
 
       <Select.Content>
-        <div className="flex min-w-52 flex-col rounded-md bg-gray-300 p-2">
+        <div className="flex min-w-52 flex-col rounded-md bg-indigo-300 p-2">
           <label
             htmlFor="Position"
             className="py-1 text-[12px] leading-4 text-primary"
@@ -54,7 +56,7 @@ export const DropdownSelect = ({
           <select
             name="Position"
             id="Position"
-            className="appearance-none bg-gray-300 text-sm leading-5 text-primary"
+            className="appearance-none bg-indigo-300 text-sm leading-5 text-primary"
             value={selectedPos}
             onChange={(e) => setSelectedPos(Number(e.target.value))}
           >
