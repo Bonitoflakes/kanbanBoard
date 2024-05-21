@@ -1,15 +1,14 @@
 import { cn } from "@/utils/cn";
 import SidePeek from ".";
 import { useToggle } from "@/utils/useToggle";
-import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
+import useCardParams from "@/utils/useCardParams";
 
 const SidepeekHusk = () => {
   const [isOpen, toggleSidepeek] = useToggle();
   const [touched, toggleTouched] = useToggle();
 
-  const [searchParams] = useSearchParams();
-  const selectedCard = searchParams.get("selectedCard");
+  const selectedCard = useCardParams();
 
   useEffect(() => {
     if (selectedCard) toggleSidepeek(true);
@@ -37,6 +36,6 @@ const SidepeekHusk = () => {
       )}
     </div>
   );
-}
+};
 
 export default SidepeekHusk;

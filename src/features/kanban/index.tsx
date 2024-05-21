@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import {
   BaseEventPayload,
@@ -10,6 +9,7 @@ import invariant from "tiny-invariant";
 
 import { useToggle } from "@/utils/useToggle";
 import { cn } from "@/utils/cn";
+import useCardParams from "@/utils/useCardParams";
 
 import {
   useGetGroupedTasksQuery,
@@ -38,8 +38,7 @@ const Kanban = () => {
   const [isOpen, toggleWidth] = useToggle();
   const [touched, toggleTouched] = useToggle();
 
-  const [searchParams] = useSearchParams();
-  const selectedCard = searchParams.get("selectedCard");
+  const selectedCard = useCardParams();
 
   const updateActiveColumn = (column: string | null) => setActiveColumn(column);
 
