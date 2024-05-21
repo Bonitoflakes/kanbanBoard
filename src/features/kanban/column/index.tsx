@@ -27,12 +27,12 @@ type ColumnProps = {
   updateActiveColumn: (column: string) => void;
 };
 
-function Column({
+const Column = ({
   title,
   order,
   activeColumn,
   updateActiveColumn,
-}: ColumnProps) {
+}: ColumnProps) => {
   const [adding, toggleAdding] = useToggle();
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
 
@@ -168,6 +168,6 @@ function Column({
       </div>
     </div>
   );
-}
+};
 
 export default Column;

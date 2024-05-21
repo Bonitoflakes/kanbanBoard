@@ -13,7 +13,7 @@ type Card = {
   order: number;
 };
 
-function Settings({ id, column, order }: Card) {
+const Settings = ({ id, column, order }: Card) => {
   const [selectedColumn, setSelectedColumn] = useState<string>(column);
   const [selectedPos, setSelectedPos] = useState<number>(order);
   const [isDropdownOpen, toggleDropdown] = useToggle(false);

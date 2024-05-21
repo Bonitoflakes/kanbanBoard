@@ -28,7 +28,7 @@ import {
   calculateColumnOrder,
 } from "./util";
 
-function Kanban() {
+const Kanban = () => {
   const { data, isLoading, isError, error } = useGetGroupedTasksQuery();
   const [updateColumn] = useUpdateColumnMutation();
   const [updateTask] = useUpdateTaskMutation();
@@ -44,7 +44,7 @@ function Kanban() {
   const updateActiveColumn = (column: string | null) => setActiveColumn(column);
 
   const handleDrop = useCallback(
-    function (args: BaseEventPayload<ElementDragType>) {
+    (args: BaseEventPayload<ElementDragType>) => {
       invariant(data, "No data from query");
       const allDropTargets = args.location.current.dropTargets;
       // Early exit if dropped on anything that is not a dropzone.
@@ -181,6 +181,6 @@ function Kanban() {
       <SidepeekHusk />
     </div>
   );
-}
+};
 
 export default Kanban;

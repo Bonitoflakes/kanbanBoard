@@ -78,7 +78,7 @@ const calculateNewOrder = (
   return newOrder;
 };
 
-function Kanban() {
+const Kanban = () => {
   const { data, isLoading, isError, error } = useGetGroupedTasksQuery();
   const [updateColumn] = useUpdateColumnMutation();
   const [updateTask] = useUpdateTaskMutation();

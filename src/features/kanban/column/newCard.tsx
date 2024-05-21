@@ -40,7 +40,7 @@ export const NewCardButton = ({
   );
 };
 
-function AddCard({ toggleAdding, columnType }: AddCardProps) {
+const AddCard = ({ columnType, toggleAdding }: AddCardProps) => {
   const [value, setValue] = useState("");
   const [addCard] = useAddTaskMutation();
 

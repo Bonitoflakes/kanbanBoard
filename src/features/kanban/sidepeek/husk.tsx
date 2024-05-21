@@ -4,7 +4,7 @@ import { useToggle } from "@/utils/useToggle";
 import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 
-function SidepeekHusk() {
+const SidepeekHusk = () => {
   const [isOpen, toggleSidepeek] = useToggle();
   const [touched, toggleTouched] = useToggle();
 

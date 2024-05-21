@@ -27,7 +27,7 @@ type CardProps = {
   order: number;
 };
 
-function Card({ id, title, column, order }: CardProps) {
+const Card = ({ id, title, column, order }: CardProps) => {
   const [editing, toggleEditing] = useToggle();
   const contentEditableRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams();
