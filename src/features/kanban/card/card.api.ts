@@ -3,6 +3,7 @@ import { ColumnAPI } from "@/features/kanban/column/column.api";
 import { getColumnAndCardIndex, getColumnIndexByTitle } from "./utils";
 import { Card, ColumnMap, NewCard, UpdateCard } from "@/types";
 import invariant from "tiny-invariant";
+import { API_ROUTES } from "@/constants/routes";
 
 export const reorderCards = (
   cards: Card[],
@@ -79,7 +80,7 @@ export const handleMoveCardInSameColumn = (
 export const CardAPI = API.injectEndpoints({
   endpoints: (builder) => ({
     getTask: builder.query<Card, number>({
-      query: (id) => `/cards/${id}`,
+      query: (id) => API_ROUTES.CARD(id),
       providesTags: (_result, _error, id) => [
         { type: "Tasks" as const, id: id },
       ],
@@ -87,7 +88,7 @@ export const CardAPI = API.injectEndpoints({
 
     addTask: builder.mutation<Card, NewCard>({
       query: (task) => ({
-        url: "/cards",
+        url: API_ROUTES.NEW_CARD,
         method: "POST",
         body: task,
       }),
@@ -144,7 +145,7 @@ export const CardAPI = API.injectEndpoints({
 
     updateTask: builder.mutation<Card, UpdateCard>({
       query: (task) => ({
-        url: `/cards/${task.id}`,
+        url: API_ROUTES.CARD(task.id),
         method: "PATCH",
         body: task,
       }),
@@ -202,7 +203,7 @@ export const CardAPI = API.injectEndpoints({
 
     deleteTask: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/cards/${id}`,
+        url: API_ROUTES.CARD(id),
         method: "DELETE",
       }),
       onQueryStarted: (id, { dispatch, queryFulfilled }) => {

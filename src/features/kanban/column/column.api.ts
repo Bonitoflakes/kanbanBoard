@@ -1,16 +1,17 @@
+import { API_ROUTES } from "@/constants/routes";
 import { API } from "@/store/api";
-import { Column, ColumnMap, NewColumn } from "@/types";
+import { Column, ColumnMap, NewColumn, UpdateColumn } from "@/types";
 
 export const ColumnAPI = API.injectEndpoints({
   endpoints: (builder) => ({
     getGroupedTasks: builder.query<ColumnMap[], void>({
-      query: () => "/columnmap",
+      query: () => API_ROUTES.GROUPED_TASKS,
       providesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
     addColumn: builder.mutation<Column, NewColumn>({
       query: ({ title, colorSpace }) => ({
-        url: "/columns",
+        url: API_ROUTES.COLUMNS,
         method: "POST",
         body: { title, colorSpace },
       }),
@@ -59,9 +60,9 @@ export const ColumnAPI = API.injectEndpoints({
       // invalidatesTags: [{ type: "Tasks", id: "LIST" }],
     }),
 
-    updateColumn: builder.mutation<Column, Partial<Column>>({
+    updateColumn: builder.mutation<Column, UpdateColumn>({
       query: (column) => ({
-        url: `/columns/${column.id}`,
+        url: API_ROUTES.COLUMN(column.id),
         method: "PATCH",
         body: column,
       }),
