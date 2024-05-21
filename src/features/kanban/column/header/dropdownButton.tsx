@@ -76,7 +76,7 @@ export const DropdownButton = ({
         <DM.Content
           loop={true}
           align="start"
-          className="min-w-[220px] rounded-lg border-[0.5px] border-gray-400 bg-primary p-1.5 shadow-2xl dark:border-[0.3px] dark:border-[#3d3d3d] dark:bg-[#262626]"
+          className="z-50 min-w-[220px] rounded-lg border-[0.5px] border-gray-400 bg-primary p-1.5 shadow-2xl dark:border-[0.3px] dark:border-[#3d3d3d] dark:bg-[#262626]"
         >
           <DropdownSelect columnID={id} columnOrder={order} togglePopover={togglePopover}>
             <DM.Item

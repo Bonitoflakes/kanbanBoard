@@ -23,9 +23,9 @@ const Alert = ({
       <AlertDialog.Trigger asChild>{children}</AlertDialog.Trigger>
 
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 bg-primary/80" />
+        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-primary/80" />
 
-        <AlertDialog.Content className="fixed left-[50%] top-[50%] max-h-[85vh] w-[90vw] max-w-[500px] translate-x-[-50%] translate-y-[-50%] rounded-md bg-gray-100 p-6 shadow-md  focus:outline-none dark:bg-gray-950">
+        <AlertDialog.Content className="fixed left-[50%] top-[50%] z-50 max-h-[85vh] w-[90vw] max-w-[500px] translate-x-[-50%] translate-y-[-50%] rounded-md bg-gray-100 p-6 shadow-md  focus:outline-none dark:bg-gray-950">
           <AlertDialog.Title className="m-0 text-base font-medium text-secondary">
             {title}
           </AlertDialog.Title>
