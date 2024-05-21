@@ -68,8 +68,9 @@ const Column = ({
       dropTargetForElements({
         element,
         canDrop: ({ source }) => {
-          if (source.data.type === "column" || source.data.type === "card")
+          if (source.data.type === "column" || source.data.type === "card") {
             return true;
+          }
           return false;
         },
         getData: (args) => {
@@ -104,6 +105,7 @@ const Column = ({
           // Don't show the drop indicator if the item is before the source
           // or after the source (i.e. the edge is near the source)
           // the left edge of the itemBefore and the right edge of the itemAfter are identical postions as the item's edge
+          // CHECK AdjacentColumns() in utils.ts
           const isDropIndicatorHidden =
             (isItemBeforeSource && closestEdge === "right") ||
             (isItemAfterSource && closestEdge === "left");
