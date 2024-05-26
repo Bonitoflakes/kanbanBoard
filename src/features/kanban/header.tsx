@@ -1,6 +1,6 @@
 import { toggleTheme } from "@/utils/theme";
 
-function Header() {
+const Header = () => {
   return (
     <div className="flex justify-between p-4">
       <h1 className="pl-2 font-sans text-3xl font-bold text-secondary">

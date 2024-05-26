@@ -5,8 +5,6 @@ type Column = {
   order: number;
 };
 
-type NewColumn = Omit<Column, "id" | "order">;
-
 type Card = {
   id: number;
   title: string;
@@ -25,6 +23,17 @@ type ColumnMap = {
 };
 
 type NewCard = Omit<Card, "id" | "order" | "description">;
-type UpdateCard = Partial<Omit<Card, "id">> & Pick<Card, "id">;
+type UpdateCard = Partial<Card> & Pick<Card, "id">;
 
-export type { Card, ColumnMap, NewCard, UpdateCard, NewColumn, Column };
+type NewColumn = Omit<Column, "id" | "order">;
+type UpdateColumn = Partial<Column> & Pick<Column, "id">;
+
+export type {
+  Card,
+  ColumnMap,
+  NewCard,
+  UpdateCard,
+  NewColumn,
+  Column,
+  UpdateColumn,
+};

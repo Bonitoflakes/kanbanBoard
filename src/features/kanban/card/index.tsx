@@ -1,11 +1,24 @@
-import { useRef } from "react";
-import invariant from "tiny-invariant";
+import { useRef, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  Edge,
+  attachClosestEdge,
+  extractClosestEdge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
+import invariant from "tiny-invariant";
+
+import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
+
 import { CardOptions } from "@/features/kanban/card/cardOptions";
 import moveCaretToEnd from "@/utils/moveCaret";
 import { cn } from "@/utils/cn";
 import { useToggle } from "@/utils/useToggle";
-import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
 
 type CardProps = {
   id: number;
@@ -14,13 +27,95 @@ type CardProps = {
   order: number;
 };
 
-function Card({ id, title, column, order }: CardProps) {
-  const [editing, toggleEditing] = useToggle(false);
+const Card = ({ id, title, column, order }: CardProps) => {
+  const [editing, toggleEditing] = useToggle();
   const contentEditableRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
+
+  const cardData = useMemo(
+    () => ({
+      type: "card",
+      id,
+      title,
+      order,
+      column,
+    }),
+    [id, order, title, column],
+  );
+
+  useEffect(() => {
+    const el = cardRef.current;
+    invariant(el);
+
+    return combine(
+      draggable({
+        element: el,
+        getInitialData: () => cardData,
+      }),
+
+      dropTargetForElements({
+        element: el,
+        canDrop: ({ source }) => {
+          if (source.data.type === "card") return true;
+          return false;
+        },
+        getData: (args) => {
+          const result = attachClosestEdge(cardData, {
+            element: el,
+            input: args.input,
+            allowedEdges: ["top", "bottom"],
+          });
+
+          return result;
+        },
+        onDrag({ self, source }) {
+          if (source.data.type === "column") {
+            setClosestEdge(null);
+            return;
+          }
+
+          const isSource = source.element === el;
+          if (isSource) {
+            setClosestEdge(null);
+            return;
+          }
+
+          const closestEdge = extractClosestEdge(self.data);
+          const sourceOrder = source.data.order as number;
+
+          const isItemBeforeSource = order === sourceOrder - 1;
+          const isItemAfterSource = order === sourceOrder + 1;
+
+          // Don't show the drop indicator if the item is before the source
+          // or after the source (i.e. the edge is near the source)
+
+          const isDropIndicatorHidden =
+            (isItemBeforeSource && closestEdge === "bottom") ||
+            (isItemAfterSource && closestEdge === "top");
+
+          const isSameLane = source.data.column === column;
+
+          if (isDropIndicatorHidden && isSameLane) {
+            setClosestEdge(null);
+            return;
+          }
+
+          setClosestEdge(closestEdge);
+        },
+        onDragLeave() {
+          setClosestEdge(null);
+        },
+        onDrop() {
+          setClosestEdge(null);
+        },
+      }),
+    );
+  }, [cardData, order]);
 
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -60,9 +155,10 @@ function Card({ id, title, column, order }: CardProps) {
 
   return (
     <div
-      className="group/card relative"
+      className="group/card relative rounded-md"
       onClick={openSidePeek}
       data-type="card"
+      ref={cardRef}
     >
       <div className="rounded-md bg-accent-2 transition-colors hover:bg-accent-1/35">
         <div
@@ -84,6 +180,7 @@ function Card({ id, title, column, order }: CardProps) {
           <CardOptions handleEdit={handleEdit} handleDelete={handleDelete} />
         )}
       </div>
+      {closestEdge && <DropIndicator edge={closestEdge} gap="4px" />}
     </div>
   );
 }

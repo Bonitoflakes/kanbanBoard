@@ -6,7 +6,7 @@ import { store } from "@/store/store";
 import { APP_ROUTES } from "@/constants/routes";
 import Kanban from "@/features/kanban";
 
-function App() {
+const App = () => {
   return (
     <Provider store={store}>
       <BrowserRouter>
