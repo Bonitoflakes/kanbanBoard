@@ -16,9 +16,9 @@ import invariant from "tiny-invariant";
 import { useGetGroupedTasksQuery } from "./column.api";
 import { cn } from "@/utils/cn";
 
-import Card from "@/features/kanban/card";
 import { NewCardButton } from "./newCard";
 import { ColumnHeader } from "./header";
+import { VirtualCards } from "./virtualCards";
 
 type ColumnProps = {
   title: string;
@@ -27,7 +27,7 @@ type ColumnProps = {
   updateActiveColumn: (column: string) => void;
 };
 
-const Column = ({
+const VirtualColumn = ({
   title,
   order,
   activeColumn,
@@ -36,7 +36,7 @@ const Column = ({
   const [adding, toggleAdding] = useToggle();
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
 
-  const columnRef = useRef<HTMLDivElement>(null);
+  const columnRef = useRef<HTMLDivElement | null>(null);
 
   const { data } = useGetGroupedTasksQuery();
   invariant(data, "No data");
@@ -150,16 +150,13 @@ const Column = ({
             "bg-cyan-200": activeColumn === title,
           },
           "magicThree",
+          "relative overflow-auto",
         )}
         ref={columnRef}
       >
         <ColumnHeader {...column} toggleAdding={toggleAdding} />
 
-        <div className=" flex flex-col gap-[4px] p-2 pb-0">
-          {column.cards.map((card) => (
-            <Card key={card.id} {...card} />
-          ))}
-        </div>
+        <VirtualCards column={column} columnRef={columnRef}/>
 
         <NewCardButton
           title={column.title} // alt for column id.
@@ -172,4 +169,4 @@ const Column = ({
   );
 };
 
-export default Column;
+export default VirtualColumn;

@@ -18,7 +18,6 @@ import {
 import { useUpdateTaskMutation } from "./card/card.api";
 
 import Header from "./header";
-import Column from "./column";
 import { NewColumn } from "./column/newColumn";
 import SidepeekHusk from "./sidepeek/husk";
 import {
@@ -27,6 +26,7 @@ import {
   calculateCardOrder,
   calculateColumnOrder,
 } from "./util";
+import VirtualColumn from "./column";
 
 const Kanban = () => {
   const { data, isLoading, isError, error } = useGetGroupedTasksQuery();
@@ -163,7 +163,7 @@ const Kanban = () => {
         <div className="magicTwo">
           {data.map((value) => {
             return (
-              <Column
+              <VirtualColumn
                 key={value.id}
                 title={value.title}
                 order={value.order}

@@ -13,12 +13,19 @@ import {
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import invariant from "tiny-invariant";
 
-import { useDeleteTaskMutation, useUpdateTaskMutation } from "./card.api";
+import {
+  useDeleteTaskMutation,
+  useGetPlaceholderQuery,
+  useUpdateTaskMutation,
+  usePrefetch,
+} from "./card.api";
 
 import { CardOptions } from "@/features/kanban/card/cardOptions";
 import moveCaretToEnd from "@/utils/moveCaret";
 import { cn } from "@/utils/cn";
 import { useToggle } from "@/utils/useToggle";
+import { IoCheckbox } from "react-icons/io5";
+import { RiFlagFill } from "react-icons/ri";
 
 type CardProps = {
   id: number;
@@ -36,6 +43,10 @@ const Card = ({ id, title, column, order }: CardProps) => {
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
+  const { data: placeholder } = useGetPlaceholderQuery(id);
+  const [imageSrc, setImageSrc] = useState("");
+
+  const prefetchCard = usePrefetch("getTask");
 
   const cardData = useMemo(
     () => ({
@@ -115,7 +126,13 @@ const Card = ({ id, title, column, order }: CardProps) => {
         },
       }),
     );
-  }, [cardData, order]);
+  }, [cardData, order, column]);
+
+  useEffect(() => {
+    if (placeholder) {
+      setImageSrc(placeholder.url);
+    }
+  }, [placeholder]);
 
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -157,15 +174,17 @@ const Card = ({ id, title, column, order }: CardProps) => {
     <div
       className="group/card relative rounded-md"
       onClick={openSidePeek}
+      onMouseEnter={() => prefetchCard(id)}
       data-type="card"
       ref={cardRef}
     >
-      <div className="rounded-md bg-accent-2 transition-colors hover:bg-accent-1/35">
+      <div className="cursor-pointer rounded-md bg-accent-2 p-2 transition-colors hover:bg-accent-1/35">
         <div
           className={cn(
-            "w-full cursor-pointer break-all rounded-md px-2 py-3 text-start text-sm font-semibold text-secondary empty:before:text-neutral-400 empty:before:content-['Untitled...'] active:cursor-grabbing dark:empty:before:text-neutral-400",
+            "mb-2 w-full break-all rounded-md border-0 p-1 text-start text-sm font-semibold text-secondary outline-none empty:before:text-neutral-400 empty:before:content-['Untitled...'] active:cursor-grabbing dark:empty:before:text-neutral-400",
             editing && "cursor-auto",
-            import.meta.env.DEV && "customOrderDebugger",
+            editing && "outline-accent-1",
+            // import.meta.env.DEV && "customOrderDebugger",
           )}
           contentEditable={editing}
           data-order={order}
@@ -176,6 +195,45 @@ const Card = ({ id, title, column, order }: CardProps) => {
           {title}
         </div>
 
+        <p className="w-fit max-w-[230px] overflow-hidden text-ellipsis whitespace-nowrap text-nowrap rounded-md bg-accent-1 px-1 text-[12px] text-primary">
+          {placeholder?.title}
+        </p>
+
+        <div className="flex items-center gap-2 py-2">
+          <p className="rounded-full bg-secondary/65 px-1 text-[12px] leading-[1.3] text-primary">
+            {placeholder?.albumId}
+          </p>
+
+          <div className="dots flex gap-[2px] ">
+            {Array.from({ length: placeholder?.albumId || 0 }, (_, idx) => (
+              <div key={idx} className="dot h-2 w-2 rounded-full bg-accent-1" />
+            ))}
+          </div>
+
+          {placeholder && <RiFlagFill color="red" size={16} />}
+        </div>
+
+        <div className="flex items-center justify-between py-1">
+          <div className="flex items-center gap-1">
+            <IoCheckbox color="black" size={16} />
+            <h3 className="text-sm text-secondary">ID-{id}</h3>
+          </div>
+
+          {/* <PiUserCircleFill color="black" size={28} /> */}
+
+          <img
+            loading="lazy"
+            src={
+              imageSrc ||
+              "https://th.bing.com/th/id/R.fa0ca630a6a3de8e33e03a009e406acd?rik=UOMXfynJ2FEiVw&riu=http%3a%2f%2fwww.clker.com%2fcliparts%2ff%2fa%2f0%2fc%2f1434020125875430376profile.png&ehk=73x7A%2fh2HgYZLT1q7b6vWMXl86IjYeDhub59EZ8hF14%3d&risl=&pid=ImgRaw&r=0"
+            }
+            width={28}
+            height={28}
+            className="rounded-full"
+            alt="Profile"
+          />
+        </div>
+
         {!editing && (
           <CardOptions handleEdit={handleEdit} handleDelete={handleDelete} />
         )}
@@ -183,6 +241,6 @@ const Card = ({ id, title, column, order }: CardProps) => {
       {closestEdge && <DropIndicator edge={closestEdge} gap="4px" />}
     </div>
   );
-}
+};
 
 export default Card;

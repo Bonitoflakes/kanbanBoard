@@ -77,8 +77,22 @@ export const handleMoveCardInSameColumn = (
   draft[columnIndex].cards = reorderedData;
 };
 
+type Placeholder = {
+  albumId: number;
+  id: number;
+  title: string;
+  url: string;
+  thumbnailURL: string;
+};
+
 export const CardAPI = API.injectEndpoints({
   endpoints: (builder) => ({
+    getPlaceholder: builder.query<Placeholder, number>({
+      query: (id) => ({
+        url: `https://jsonplaceholder.typicode.com/photos/${id}`,
+      }),
+    }),
+
     getTask: builder.query<Card, number>({
       query: (id) => API_ROUTES.CARD(id),
       providesTags: (_result, _error, id) => [
@@ -240,4 +254,8 @@ export const {
   useAddTaskMutation,
   useUpdateTaskMutation,
   useDeleteTaskMutation,
+
+
+  usePrefetch,
+  useGetPlaceholderQuery
 } = CardAPI;
