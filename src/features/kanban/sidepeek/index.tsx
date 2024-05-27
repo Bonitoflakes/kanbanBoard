@@ -5,10 +5,13 @@ import invariant from "tiny-invariant";
 import Settings from "./settings";
 import { useGetTaskQuery, useUpdateTaskMutation } from "../card/card.api";
 
-function SidePeek({
+const SidePeek = ({
   toggleSidepeek,
   toggleTouched,
-}: Readonly<{ toggleTouched: () => void; toggleSidepeek: () => void }>) {
+}: {
+  toggleTouched: () => void;
+  toggleSidepeek: () => void;
+}) => {
   const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -107,6 +110,6 @@ function SidePeek({
       </div>
     </div>
   );
-}
+};
 
 export default SidePeek;

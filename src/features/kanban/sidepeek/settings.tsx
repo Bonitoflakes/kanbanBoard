@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { MdMoveUp } from "react-icons/md";
 import invariant from "tiny-invariant";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { CardAPI, useUpdateTaskMutation } from "../card/card.api";
+import { useUpdateTaskMutation } from "../card/card.api";
 import { useGetGroupedTasksQuery } from "../column/column.api";
 import { useToggle } from "@/utils/useToggle";
-import { useAppDispatch } from "@/store/store";
 import { DropdownSelector } from "./dropdownSelector";
 
 type Card = {
@@ -14,11 +13,10 @@ type Card = {
   order: number;
 };
 
-function Settings({ id, column, order }: Card) {
+const Settings = ({ id, column, order }: Card) => {
   const [selectedColumn, setSelectedColumn] = useState<string>(column);
   const [selectedPos, setSelectedPos] = useState<number>(order);
   const [isDropdownOpen, toggleDropdown] = useToggle(false);
-  const dispatch = useAppDispatch();
 
   const { data: groupedTasks } = useGetGroupedTasksQuery();
   invariant(groupedTasks);
@@ -51,13 +49,6 @@ function Settings({ id, column, order }: Card) {
       column: selectedColumn,
       order: selectedPos,
     });
-
-    dispatch(
-      CardAPI.util.updateQueryData("getTask", id, (draft) => {
-        draft.column = selectedColumn;
-        draft.order = selectedPos;
-      }),
-    );
 
     toggleDropdown();
   };

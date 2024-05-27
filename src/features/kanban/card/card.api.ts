@@ -3,6 +3,7 @@ import { ColumnAPI } from "@/features/kanban/column/column.api";
 import { getColumnAndCardIndex, getColumnIndexByTitle } from "./utils";
 import { Card, ColumnMap, NewCard, UpdateCard } from "@/types";
 import invariant from "tiny-invariant";
+import { API_ROUTES } from "@/constants/routes";
 
 export const reorderCards = (
   cards: Card[],
@@ -32,7 +33,7 @@ export const handleMoveCardToNewColumn = (
   cardIndex: number,
   args: UpdateCard,
 ) => {
-  console.log("Move card to different column");
+  // console.log("Move card to different column");
   invariant(args.column !== undefined, "column is undefined");
   invariant(args.order !== undefined, "order is undefined");
 
@@ -65,7 +66,7 @@ export const handleMoveCardInSameColumn = (
   cardIndex: number,
   args: UpdateCard,
 ) => {
-  console.log("Update card within the same column");
+  // console.log("Update card within the same column");
   invariant(args.order !== undefined, "order is undefined");
 
   const reorderedData = reorderCards(
@@ -76,10 +77,24 @@ export const handleMoveCardInSameColumn = (
   draft[columnIndex].cards = reorderedData;
 };
 
+type Placeholder = {
+  albumId: number;
+  id: number;
+  title: string;
+  url: string;
+  thumbnailURL: string;
+};
+
 export const CardAPI = API.injectEndpoints({
   endpoints: (builder) => ({
+    getPlaceholder: builder.query<Placeholder, number>({
+      query: (id) => ({
+        url: `https://jsonplaceholder.typicode.com/photos/${id}`,
+      }),
+    }),
+
     getTask: builder.query<Card, number>({
-      query: (id) => `/cards/${id}`,
+      query: (id) => API_ROUTES.CARD(id),
       providesTags: (_result, _error, id) => [
         { type: "Tasks" as const, id: id },
       ],
@@ -87,7 +102,7 @@ export const CardAPI = API.injectEndpoints({
 
     addTask: builder.mutation<Card, NewCard>({
       query: (task) => ({
-        url: "/cards",
+        url: API_ROUTES.NEW_CARD,
         method: "POST",
         body: task,
       }),
@@ -144,12 +159,12 @@ export const CardAPI = API.injectEndpoints({
 
     updateTask: builder.mutation<Card, UpdateCard>({
       query: (task) => ({
-        url: `/cards/${task.id}`,
+        url: API_ROUTES.CARD(task.id),
         method: "PATCH",
         body: task,
       }),
-      onQueryStarted: (args, { dispatch, queryFulfilled }) => {
-        const patchResult = dispatch(
+      onQueryStarted: async (args, { dispatch, queryFulfilled }) => {
+        const patchGroupedTasksResult = dispatch(
           ColumnAPI.util.updateQueryData(
             "getGroupedTasks",
             undefined,
@@ -162,7 +177,7 @@ export const CardAPI = API.injectEndpoints({
                 return console.error("Column or card not found");
 
               if (args.order === undefined) {
-                console.log("Update card details only, not order");
+                // console.log("Update card details only, not order");
                 draft[columnIndex].cards[cardIndex] = {
                   ...draft[columnIndex].cards[cardIndex],
                   ...args,
@@ -183,13 +198,26 @@ export const CardAPI = API.injectEndpoints({
           ),
         );
 
-        queryFulfilled.catch(patchResult.undo);
+        const patchGetTaskResult = dispatch(
+          CardAPI.util.updateQueryData("getTask", args.id, (draft) =>
+            Object.assign(draft, args),
+          ),
+        );
+
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          console.error(error);
+
+          patchGroupedTasksResult.undo();
+          patchGetTaskResult.undo();
+        }
       },
     }),
 
     deleteTask: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/cards/${id}`,
+        url: API_ROUTES.CARD(id),
         method: "DELETE",
       }),
       onQueryStarted: (id, { dispatch, queryFulfilled }) => {
@@ -226,4 +254,8 @@ export const {
   useAddTaskMutation,
   useUpdateTaskMutation,
   useDeleteTaskMutation,
+
+
+  usePrefetch,
+  useGetPlaceholderQuery
 } = CardAPI;
