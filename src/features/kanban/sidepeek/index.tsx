@@ -1,25 +1,28 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { VscEyeClosed } from "react-icons/vsc";
 import invariant from "tiny-invariant";
 import Settings from "./settings";
 import { useGetTaskQuery, useUpdateTaskMutation } from "../card/card.api";
+import { Loader } from "@/components/skeleton";
 
-const SidePeek = ({
-  toggleSidepeek,
-  toggleTouched,
-}: {
-  toggleTouched: () => void;
-  toggleSidepeek: () => void;
-}) => {
+const SidePeek = ({ closeSidepeek }: { closeSidepeek: () => void }) => {
   const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const selectedCard = Number(searchParams.get("selectedCard")); //TODO: Hanlde edge cases --> string or NAN
+  const [activeCard, setActiveCard] = useState<number>(0);
 
-  const { data, isLoading, isError, error } = useGetTaskQuery(selectedCard);
+  useEffect(() => {
+    const selectedCard = Number(searchParams.get("selectedCard"));
 
+    if (selectedCard) setActiveCard(selectedCard);
+  }, [searchParams]);
+
+  const { data, isLoading, isError, error, isFetching, currentData } =
+    useGetTaskQuery(activeCard);
+
+  console.log(isFetching, currentData);
   const [updateTask] = useUpdateTaskMutation();
 
   const handleBlur = () => {
@@ -30,7 +33,7 @@ const SidePeek = ({
     const description: string = descRef.current.innerText;
 
     updateTask({
-      id: selectedCard,
+      id: activeCard,
       title,
       description,
     });
@@ -41,9 +44,8 @@ const SidePeek = ({
     newSearchParams.delete("selectedCard");
     setSearchParams(newSearchParams);
 
-    toggleSidepeek();
-    toggleTouched();
-  }, [toggleSidepeek, searchParams, setSearchParams, toggleTouched]);
+    closeSidepeek();
+  }, [closeSidepeek, searchParams, setSearchParams]);
 
   useEffect(() => {
     const handleKeyboard = (event: KeyboardEvent) => {
@@ -56,9 +58,15 @@ const SidePeek = ({
   }, [handleClose]);
 
   // TODO: Better strategy for these states.
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading || isFetching)
+    return (
+      <div className="flex h-full p-4">
+        <Loader />
+      </div>
+    );
+
   if (isError) return <div>Error: {JSON.stringify(error)}</div>;
-  if (!data || isNaN(selectedCard))
+  if (!data || isNaN(activeCard))
     return (
       <div className="p-3">
         <button

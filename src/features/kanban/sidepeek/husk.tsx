@@ -15,6 +15,11 @@ const SidepeekHusk = () => {
     else toggleSidepeek(false);
   }, [selectedCard, toggleSidepeek]);
 
+  const closeSidepeek = () => {
+    toggleSidepeek(false);
+    toggleTouched(true);
+  };
+
   return (
     <div
       id="sidepeek-husk"
@@ -28,12 +33,7 @@ const SidepeekHusk = () => {
       aria-hidden={!isOpen}
       data-type="sidepeek"
     >
-      {isOpen && (
-        <SidePeek
-          toggleSidepeek={toggleSidepeek}
-          toggleTouched={toggleTouched}
-        />
-      )}
+      {isOpen && <SidePeek closeSidepeek={closeSidepeek} />}
     </div>
   );
 };
