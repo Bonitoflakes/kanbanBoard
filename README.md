@@ -67,3 +67,6 @@ Start the server
 **Client:** React, Redux, TailwindCSS
 
 **Server:** Node, Express
+
+Future Reference:
+Check data-theme strategy for column colors.
