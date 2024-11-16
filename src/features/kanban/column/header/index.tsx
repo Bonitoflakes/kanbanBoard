@@ -18,7 +18,7 @@ export const ColumnHeader = (props: ColumnHeaderProps) => {
   
 
   return (
-    <div className="flex">
+    <div className="flex p-2 sticky top-0 z-50 bg-accent-3">
       {/* The Pill */}
       <div className="flex items-center gap-1 rounded-3xl bg-accent-2 pl-[7px] pr-[9px]">
         <div className="h-2 w-2 rounded-full bg-accent-1" />

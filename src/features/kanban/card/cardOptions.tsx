@@ -5,7 +5,7 @@ type CardOptionsProps = {
   handleDelete: (e: React.MouseEvent) => void;
 };
 
-export function CardOptions({ handleEdit, handleDelete }: CardOptionsProps) {
+export const CardOptions = ({ handleEdit, handleDelete }: CardOptionsProps) => {
   return (
     <span className="absolute right-3 top-1.5 flex opacity-0 group-hover/card:opacity-100">
       <button

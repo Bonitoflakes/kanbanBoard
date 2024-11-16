@@ -1,20 +1,24 @@
 import { cn } from "@/utils/cn";
 import SidePeek from ".";
 import { useToggle } from "@/utils/useToggle";
-import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
+import useCardParams from "@/utils/useCardParams";
 
-function SidepeekHusk() {
+const SidepeekHusk = () => {
   const [isOpen, toggleSidepeek] = useToggle();
   const [touched, toggleTouched] = useToggle();
 
-  const [searchParams] = useSearchParams();
-  const selectedCard = searchParams.get("selectedCard");
+  const selectedCard = useCardParams();
 
   useEffect(() => {
     if (selectedCard) toggleSidepeek(true);
     else toggleSidepeek(false);
   }, [selectedCard, toggleSidepeek]);
+
+  const closeSidepeek = () => {
+    toggleSidepeek(false);
+    toggleTouched(true);
+  };
 
   return (
     <div
@@ -29,14 +33,9 @@ function SidepeekHusk() {
       aria-hidden={!isOpen}
       data-type="sidepeek"
     >
-      {isOpen && (
-        <SidePeek
-          toggleSidepeek={toggleSidepeek}
-          toggleTouched={toggleTouched}
-        />
-      )}
+      {isOpen && <SidePeek closeSidepeek={closeSidepeek} />}
     </div>
   );
-}
+};
 
 export default SidepeekHusk;

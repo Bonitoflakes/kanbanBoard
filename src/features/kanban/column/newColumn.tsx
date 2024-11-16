@@ -4,7 +4,7 @@ import { MdAdd } from "react-icons/md";
 import { useToggle } from "@/utils/useToggle";
 import { useAddColumnMutation } from "./column.api";
 
-export function NewColumn() {
+export const NewColumn = () => {
   const [adding, toggleAdding] = useToggle();
   const [value, setValue] = useState("");
   const [addColumn] = useAddColumnMutation();
@@ -44,4 +44,4 @@ export function NewColumn() {
       )}
     </div>
   );
-}
+};

@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from "react";
+import { MouseEvent, memo, useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { cn } from "@/utils/cn";
 import { useUpdateColumnMutation } from "../column.api";
@@ -30,7 +30,7 @@ const colors = Object.freeze({
   gray: "bg-gray-400",
 });
 
-export const DropdownButton = ({
+const MDropdownButton = ({
   id,
   order,
   colorSpace,
@@ -76,9 +76,13 @@ export const DropdownButton = ({
         <DM.Content
           loop={true}
           align="start"
-          className="min-w-[220px] rounded-lg border-[0.5px] border-gray-400 bg-primary p-1.5 shadow-2xl dark:border-[0.3px] dark:border-[#3d3d3d] dark:bg-[#262626]"
+          className="z-50 min-w-[220px] rounded-lg border-[0.5px] border-gray-400 bg-primary p-1.5 shadow-2xl dark:border-[0.3px] dark:border-[#3d3d3d] dark:bg-[#262626]"
         >
-          <DropdownSelect columnID={id} columnOrder={order} togglePopover={togglePopover}>
+          <DropdownSelect
+            columnID={id}
+            columnOrder={order}
+            togglePopover={togglePopover}
+          >
             <DM.Item
               autoFocus
               className="flex cursor-pointer justify-between rounded-lg p-2 text-sm text-secondary outline-none hover:bg-secondary/15 focus-visible:bg-secondary/15"
@@ -150,3 +154,5 @@ export const DropdownButton = ({
     </DM.Root>
   );
 };
+
+export const DropdownButton = memo(MDropdownButton);
